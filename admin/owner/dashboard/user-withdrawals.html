@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Withdrawals</title>
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <link rel="icon" href="/assets/images/logo.png" />
+    <style>
+      .page-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: 25px;
+        margin-bottom: 50px;
+      }
+      .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 90%;
+        max-width: 1100px;
+        margin: 40px 0 1.5rem;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 1100px;
+        overflow: hidden;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+      th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        color: #374151;
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: #fafafa;
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-approved {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-cancelled {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      .btn {
+        padding: 0.45rem 1rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .btn-approve {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .btn-approve:hover {
+        background: #a7f3d0;
+      }
+      .btn-reject {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .btn-reject:hover {
+        background: #fecaca;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+      }
+      .btn-ghost:hover {
+        background: #f9fafb;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .muted {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #fff7ed;
+        color: #c2410c;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 500;
+      }
+      .empty {
+        text-align: center;
+        padding: 3rem;
+        color: #9ca3af;
+      }
+      .wallet {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: #6b7280;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .toast-container {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        min-width: 280px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        animation: slideIn 0.3s ease;
+      }
+      .toast.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+      }
+      .toast.warning {
+        background: #fef3c7;
+        color: #92400e;
+        border-left: 4px solid #f59e0b;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .dialog {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1.75rem;
+        max-width: 420px;
+        width: 90%;
+      }
+      .dialog h3 {
+        margin: 0 0 0.5rem;
+      }
+      .dialog p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+      .dialog input {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        outline: none;
+        margin-bottom: 1rem;
+      }
+      .dialog input:focus {
+        border-color: #ef4444;
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+    <header id="topnav-mount"></header>
+
+    <div class="page-wrap">
+      <div class="page-head">
+        <div>
+          <h1 style="margin: 0">User Withdrawals</h1>
+          <p class="muted" style="margin: 6px 0 0">
+            View and manage withdrawal requests for this user.
+          </p>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-ghost">← Back</a>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="user-pill" id="userPill">Loading...</span>
+          <span class="muted" id="countText"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Wallet</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="withdrawalsTbody">
+              <tr>
+                <td colspan="6" class="empty">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      const userId = new URLSearchParams(window.location.search).get("userId");
+
+      function showToast(type, message) {
+        const container = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌", warning: "⚠️" };
+        t.innerHTML = `<span>${icons[type]}</span><span>${message}</span>
+        <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;opacity:0.6;">✕</button>`;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      function esc(str) {
+        return String(str ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[m],
+        );
+      }
+
+      function statusBadge(s) {
+        return `<span class="badge badge-${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
+      }
+
+      function formatDate(d) {
+        return d ? new Date(d).toLocaleString() : "—";
+      }
+
+      async function loadUser() {
+        if (!userId) return;
+        try {
+          const res = await fetch(`/api/admin/users/${userId}`, {
+            credentials: "include",
+          });
+          const { user } = await res.json();
+          document.getElementById("userPill").textContent =
+            `👤 ${user.name} (${user.email})`;
+        } catch {
+          document.getElementById("userPill").textContent = "Unknown user";
+        }
+      }
+
+      function copyWallet(btn, address) {
+        const copyIcon = btn.querySelector(".copy-icon");
+        const checkIcon = btn.querySelector(".check-icon");
+        navigator.clipboard
+          .writeText(address)
+          .then(() => {
+            copyIcon.style.display = "none";
+            checkIcon.style.display = "block";
+            btn.style.color = "#065f46";
+            setTimeout(() => {
+              checkIcon.style.display = "none";
+              copyIcon.style.display = "block";
+              btn.style.color = "#9ca3af";
+            }, 2000);
+          })
+          .catch(() => showToast("error", "Failed to copy address."));
+      }
+
+      async function loadWithdrawals() {
+        try {
+          const res = await fetch(`/api/admin/users/${userId}/withdrawals`, {
+            credentials: "include",
+          });
+          const { success, withdrawals } = await res.json();
+          if (!success) throw new Error();
+
+          document.getElementById("countText").textContent =
+            `${withdrawals.length} record(s)`;
+          const tbody = document.getElementById("withdrawalsTbody");
+
+          if (!withdrawals.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty">No withdrawals found.</td></tr>`;
+            return;
+          }
+
+          tbody.innerHTML = withdrawals
+            .map(
+              (w) => `
+          <tr id="row-${w._id}">
+            <td>${formatDate(w.createdAt)}</td>
+            <td><strong>$${w.amount}</strong></td>
+            <td>${esc(w.currency)}</td>
+<td>
+  <div style="display:flex;align-items:center;gap:5px;">
+    <span class="wallet" title="${esc(w.walletAddress)}">${esc(w.walletAddress)}</span>
+    <button onclick="copyWallet(this, '${esc(w.walletAddress)}')"
+      title="Copy address"
+      style="background:none;border:none;cursor:pointer;padding:2px;color:#9ca3af;flex-shrink:0;display:flex;align-items:center;">
+      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </button>
+  </div>
+</td>            <td>${statusBadge(w.status)}</td>
+            <td>
+              ${
+                w.status === "pending"
+                  ? `
+                <div style="display:flex;gap:6px;">
+                  <button class="btn btn-approve" onclick="approveWithdrawal('${w._id}', this)">Approve</button>
+                  <button class="btn btn-reject" onclick="openRejectModal('${w._id}')">Reject</button>
+                </div>`
+                  : "—"
+              }
+            </td>
+          </tr>`,
+            )
+            .join("");
+        } catch {
+          document.getElementById("withdrawalsTbody").innerHTML =
+            `<tr><td colspan="6" class="empty">Failed to load withdrawals.</td></tr>`;
+        }
+      }
+
+      async function approveWithdrawal(withdrawalId, btn) {
+        btn.disabled = true;
+        btn.textContent = "Approving...";
+        try {
+          const res = await fetch(`/api/admin/users/${withdrawalId}/approve`, {
+            method: "PATCH",
+            credentials: "include",
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Withdrawal approved!");
+          loadWithdrawals();
+        } catch (err) {
+          showToast("error", err.message || "Failed to approve");
+          btn.disabled = false;
+          btn.textContent = "Approve";
+        }
+      }
+
+      let rejectTargetId = null;
+
+      function openRejectModal(withdrawalId) {
+        rejectTargetId = withdrawalId;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay";
+        overlay.id = "rejectOverlay";
+        overlay.innerHTML = `
+        <div class="dialog">
+          <h3>Reject Withdrawal</h3>
+          <p>Provide a reason — balance will be refunded to the user.</p>
+          <input type="text" id="rejectReasonInput" placeholder="Rejection reason..." />
+          <div class="dialog-actions">
+            <button class="btn btn-ghost" onclick="closeRejectModal()">Cancel</button>
+            <button class="btn btn-reject" id="rejectSubmitBtn" onclick="submitReject()">Reject</button>
+          </div>
+        </div>`;
+        document.body.appendChild(overlay);
+      }
+
+      function closeRejectModal() {
+        document.getElementById("rejectOverlay")?.remove();
+        rejectTargetId = null;
+      }
+
+      async function submitReject() {
+        const reason = document
+          .getElementById("rejectReasonInput")
+          ?.value.trim();
+        if (!reason) {
+          showToast("warning", "Please provide a reason.");
+          return;
+        }
+
+        const btn = document.getElementById("rejectSubmitBtn");
+        btn.disabled = true;
+        btn.textContent = "Rejecting...";
+
+        try {
+          const res = await fetch(
+            `/api/admin/users/withdrawal/${rejectTargetId}/reject`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ rejectionReason: reason }),
+            },
+          );
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Withdrawal rejected and balance refunded.");
+          closeRejectModal();
+          loadWithdrawals();
+        } catch (err) {
+          showToast("error", err.message || "Failed to reject");
+          btn.disabled = false;
+          btn.textContent = "Reject";
+        }
+      }
+
+      loadUser();
+      loadWithdrawals();
+    </script>
+  </body>
+</html>

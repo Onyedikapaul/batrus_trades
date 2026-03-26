@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Users Withdrawals</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .page-header h1 {
+        margin: 0;
+      }
+      .muted {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 4px 0 0;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .filters {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .filters select,
+      .filters input {
+        padding: 0.4rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        background: #fff;
+        color: #374151;
+        outline: none;
+      }
+      .filters select:focus,
+      .filters input:focus {
+        border-color: #f59e0b;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+      th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+      }
+      td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        color: #374151;
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: #fafafa;
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-approved {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-cancelled {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      .btn {
+        padding: 0.35rem 0.8rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .btn-approve {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .btn-approve:hover {
+        background: #a7f3d0;
+      }
+      .btn-reject {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .btn-reject:hover {
+        background: #fecaca;
+      }
+      .btn-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .btn-pending:hover {
+        background: #fde68a;
+      }
+      .btn-delete  { background: #fef2f2; color: #7f1d1d; border: 1px solid #fca5a5; } 
+      .btn-delete:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+      .btn-ghost {
+        background: transparent;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+      }
+      .btn-ghost:hover {
+        background: #f9fafb;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .action-btns {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .user-link {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        color: #c2410c;
+        font-size: 0.82rem;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      .user-link:hover {
+        text-decoration: underline;
+      }
+      .wallet {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: #6b7280;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+      .empty {
+        text-align: center;
+        padding: 3rem;
+        color: #9ca3af;
+      }
+      .toast-container {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        min-width: 280px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        animation: slideIn 0.3s ease;
+      }
+      .toast.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+      }
+      .toast.warning {
+        background: #fef3c7;
+        color: #92400e;
+        border-left: 4px solid #f59e0b;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .dialog {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1.75rem;
+        max-width: 420px;
+        width: 90%;
+      }
+      .dialog h3 {
+        margin: 0 0 0.5rem;
+      }
+      .dialog p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+      .dialog input {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        outline: none;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
+      }
+      .dialog input:focus {
+        border-color: #ef4444;
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+
+      /* ── Delete warning modal ── */
+      #wdDeleteModal {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(3px);
+      }
+      #wdDeleteModal.wdm-open { display: flex !important; }
+      .wdm-dialog {
+        background: #fff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 430px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+        animation: wdmIn 0.2s ease;
+      }
+      @keyframes wdmIn { from { opacity:0; transform:scale(0.95) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+      .wdm-head { background: #fff1f2; border-bottom: 1px solid #fecdd3; padding: 18px 22px 14px; display: flex; align-items: flex-start; justify-content: space-between; }
+      .wdm-head-left { display: flex; align-items: flex-start; gap: 12px; }
+      .wdm-icon  { width: 38px; height: 38px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+      .wdm-title { font-size: 15px; font-weight: 700; color: #991b1b; margin: 0; }
+      .wdm-sub   { font-size: 12px; color: #ef4444; margin: 3px 0 0; }
+      .wdm-x { background: rgba(239,68,68,0.1); border: none; border-radius: 8px; color: #ef4444; width: 30px; height: 30px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .wdm-x:hover { background: rgba(239,68,68,0.2); }
+      .wdm-body { padding: 20px 22px 22px; }
+      .wdm-warning { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 13px 15px; font-size: 13px; color: #92400e; line-height: 1.55; margin-bottom: 16px; }
+      .wdm-warning strong { color: #c2410c; }
+      .wdm-info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+      .wdm-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; }
+      .wdm-row .dk { color: #94a3b8; font-weight: 500; }
+      .wdm-row .dv { color: #1e293b; font-weight: 600; }
+      .wdm-input-wrap { margin-bottom: 18px; }
+      .wdm-input-wrap label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+      .wdm-input-wrap input { width: 100%; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 14px; font-family: inherit; color: #111827; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+      .wdm-input-wrap input:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+      .wdm-input-wrap small { font-size: 11px; color: #94a3b8; margin-top: 4px; display: block; }
+      .wdm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .wdm-cancel  { padding: 11px; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; color: #374151; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+      .wdm-cancel:hover { background: #f3f4f6; }
+      .wdm-confirm { padding: 11px; border-radius: 10px; border: none; background: #ef4444; color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s; }
+      .wdm-confirm:hover { opacity: 0.88; }
+      .wdm-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+      .wdm-result { margin-top: 12px; }
+      .wdm-ok  { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+      .wdm-err { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+    </style>
+  </head>
+
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+    <header id="topnav-mount"></header>
+
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top: 50px">
+          <div class="page-header">
+            <div>
+              <h1>Users Withdrawals</h1>
+              <p class="muted">
+                View and manage all withdrawal requests across all users.
+              </p>
+            </div>
+            <span
+              class="muted"
+              id="countText"
+              style="align-self: center"
+            ></span>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="filters">
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search user or currency..."
+                  style="width: 200px"
+                />
+                <select id="statusFilter">
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Wallet</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="withdrawalsTbody">
+                  <tr>
+                    <td colspan="7" class="empty">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer id="footer-mount"></footer>
+
+    <!-- Delete Warning Modal -->
+    <div id="wdDeleteModal" aria-hidden="true">
+      <div class="wdm-dialog">
+        <div class="wdm-head">
+          <div class="wdm-head-left">
+            <div class="wdm-icon">🗑️</div>
+            <div>
+              <div class="wdm-title">Delete Withdrawal</div>
+              <div class="wdm-sub">This action cannot be undone</div>
+            </div>
+          </div>
+          <button class="wdm-x" id="wdmCloseBtn">×</button>
+        </div>
+        <div class="wdm-body">
+          <div class="wdm-warning">
+            ⚠️ You are about to <strong>permanently delete</strong> this withdrawal record.
+            This will <strong>not</strong> automatically reverse the user's balance.
+            Make sure any balance adjustments have been handled separately before deleting.
+          </div>
+          <div class="wdm-info" id="wdmInfo"></div>
+          <div class="wdm-input-wrap">
+            <label>Type <strong>DELETE</strong> to confirm</label>
+            <input type="text" id="wdmConfirmInput" placeholder='Type "DELETE" here' autocomplete="off" />
+            <small>Case-sensitive.</small>
+          </div>
+          <div class="wdm-actions">
+            <button class="wdm-cancel"  id="wdmCancelBtn">Cancel</button>
+            <button class="wdm-confirm" id="wdmConfirmBtn" disabled>🗑️ Delete Permanently</button>
+          </div>
+          <div class="wdm-result" id="wdmResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      let allWithdrawals = [];
+      let deletingWdId   = null;
+
+      function showToast(type, message) {
+        const container = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌", warning: "⚠️" };
+        t.innerHTML = `<span>${icons[type]}</span><span>${message}</span>
+          <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;opacity:0.6;">✕</button>`;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      function esc(str) {
+        return String(str ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[m],
+        );
+      }
+
+      function statusBadge(s) {
+        return `<span class="badge badge-${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
+      }
+
+      function formatDate(d) {
+        return d ? new Date(d).toLocaleString() : "—";
+      }
+
+      function actionButtons(w) {
+        const id = w._id;
+        const s  = w.status;
+
+        const approve = `<button class="btn btn-approve" onclick="approveWithdrawal('${id}', this)">Approve</button>`;
+        const reject  = `<button class="btn btn-reject"  onclick="openRejectModal('${id}')">Reject</button>`;
+        const pending = `<button class="btn btn-pending" onclick="setPending('${id}', this)">Set Pending</button>`;
+        const del     = `<button class="btn btn-delete"  onclick="openDeleteModal('${id}','${esc(w.user?.name || "Unknown")}','${esc(w.user?.email || "")}',${w.amount},'${esc(w.currency || "—")}','${s}')">🗑 Delete</button>`;
+
+        if (s === "cancelled") return `<div class="action-btns">${del}</div>`;
+        if (s === "pending")   return `<div class="action-btns">${approve}${reject}${del}</div>`;
+        if (s === "approved")  return `<div class="action-btns">${reject}${pending}${del}</div>`;
+        if (s === "rejected")  return `<div class="action-btns">${approve}${pending}${del}</div>`;
+
+        return `<div class="action-btns">${del}</div>`;
+      }
+
+      function copyWallet(btn, address) {
+        const copyIcon  = btn.querySelector(".copy-icon");
+        const checkIcon = btn.querySelector(".check-icon");
+        navigator.clipboard.writeText(address).then(() => {
+          copyIcon.style.display  = "none";
+          checkIcon.style.display = "block";
+          btn.style.color = "#065f46";
+          setTimeout(() => {
+            checkIcon.style.display = "none";
+            copyIcon.style.display  = "block";
+            btn.style.color = "#9ca3af";
+          }, 2000);
+        }).catch(() => showToast("error", "Failed to copy address."));
+      }
+
+      function renderTable(withdrawals) {
+        const tbody = document.getElementById("withdrawalsTbody");
+        document.getElementById("countText").textContent = `${withdrawals.length} record(s)`;
+
+        if (!withdrawals.length) {
+          tbody.innerHTML = `<tr><td colspan="7" class="empty">No withdrawals found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = withdrawals.map((w) => {
+          const userId    = w.user?._id  || w.user;
+          const userName  = w.user?.name  || "Unknown";
+          const userEmail = w.user?.email || "";
+          return `
+    <tr id="row-${w._id}">
+      <td style="white-space:nowrap;">${formatDate(w.createdAt)}</td>
+      <td>
+        <a class="user-link" href="/admin/owner/dashboard/user-withdrawals.html?userId=${userId}">
+          👤 ${esc(userName)}
+          <span style="color:#9ca3af;font-size:0.75rem;">${esc(userEmail)}</span>
+        </a>
+      </td>
+      <td><strong>$${Number(w.amount).toLocaleString()}</strong></td>
+      <td>${esc(w.currency)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span class="wallet" title="${esc(w.walletAddress)}">${esc(w.walletAddress)}</span>
+          <button onclick="copyWallet(this, '${esc(w.walletAddress)}')"
+            title="Copy address"
+            style="background:none;border:none;cursor:pointer;padding:2px;color:#9ca3af;flex-shrink:0;display:flex;align-items:center;">
+            <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+      </td>
+      <td>${statusBadge(w.status)}</td>
+      <td>${actionButtons(w)}</td>
+    </tr>`;
+        }).join("");
+      }
+
+      function applyFilters() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const status = document.getElementById("statusFilter").value;
+        const filtered = allWithdrawals.filter((w) => {
+          const userName  = (w.user?.name  || "").toLowerCase();
+          const userEmail = (w.user?.email || "").toLowerCase();
+          const currency  = (w.currency   || "").toLowerCase();
+          const matchSearch = !search || userName.includes(search) || userEmail.includes(search) || currency.includes(search);
+          const matchStatus = !status || w.status === status;
+          return matchSearch && matchStatus;
+        });
+        renderTable(filtered);
+      }
+
+      async function loadWithdrawals() {
+        try {
+          const res = await fetch("/api/admin/withdrawals", { credentials: "include" });
+          const { success, withdrawals } = await res.json();
+          if (!success) throw new Error();
+          allWithdrawals = withdrawals;
+          applyFilters();
+        } catch {
+          document.getElementById("withdrawalsTbody").innerHTML =
+            `<tr><td colspan="7" class="empty">Failed to load withdrawals.</td></tr>`;
+        }
+      }
+
+      async function approveWithdrawal(withdrawalId, btn) {
+        btn.disabled = true;
+        btn.textContent = "Approving...";
+        try {
+          const res = await fetch(`/api/admin/users/${withdrawalId}/approve`, {
+            method: "PATCH",
+            credentials: "include",
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Withdrawal approved!");
+          loadWithdrawals();
+        } catch (err) {
+          showToast("error", err.message || "Failed to approve");
+          btn.disabled = false;
+          btn.textContent = "Approve";
+        }
+      }
+
+      async function setPending(withdrawalId, btn) {
+        btn.disabled = true;
+        btn.textContent = "Updating...";
+        try {
+          const res = await fetch(`/api/admin/withdrawals/${withdrawalId}/pending`, {
+            method: "PATCH",
+            credentials: "include",
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Withdrawal set back to pending.");
+          loadWithdrawals();
+        } catch (err) {
+          showToast("error", err.message || "Failed to update");
+          btn.disabled = false;
+          btn.textContent = "Set Pending";
+        }
+      }
+
+      // ── Reject Modal ──
+      let rejectTargetId = null;
+
+      function openRejectModal(withdrawalId) {
+        rejectTargetId = withdrawalId;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay";
+        overlay.id = "rejectOverlay";
+        overlay.innerHTML = `
+          <div class="dialog">
+            <h3>Reject Withdrawal</h3>
+            <p>Provide a reason — balance will be refunded to the user.</p>
+            <input type="text" id="rejectReasonInput" placeholder="Rejection reason..." />
+            <div class="dialog-actions">
+              <button class="btn btn-ghost" onclick="closeRejectModal()">Cancel</button>
+              <button class="btn btn-reject" id="rejectSubmitBtn" onclick="submitReject()">Reject</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+      }
+
+      function closeRejectModal() {
+        document.getElementById("rejectOverlay")?.remove();
+        rejectTargetId = null;
+      }
+
+      async function submitReject() {
+        const reason = document.getElementById("rejectReasonInput")?.value.trim();
+        if (!reason) {
+          showToast("warning", "Please provide a reason.");
+          return;
+        }
+        const btn = document.getElementById("rejectSubmitBtn");
+        btn.disabled = true;
+        btn.textContent = "Rejecting...";
+        try {
+          const res = await fetch(`/api/admin/users/withdrawal/${rejectTargetId}/reject`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ rejectionReason: reason }),
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Withdrawal rejected and balance refunded.");
+          closeRejectModal();
+          loadWithdrawals();
+        } catch (err) {
+          showToast("error", err.message || "Failed to reject");
+          btn.disabled = false;
+          btn.textContent = "Reject";
+        }
+      }
+
+      // ── Delete Modal ──
+      function openDeleteModal(id, name, email, amount, currency, status) {
+        deletingWdId = id;
+
+        document.getElementById("wdmInfo").innerHTML = `
+          <div class="wdm-row"><span class="dk">User</span><span class="dv">${esc(name)}</span></div>
+          <div class="wdm-row"><span class="dk">Email</span><span class="dv">${esc(email)}</span></div>
+          <div class="wdm-row"><span class="dk">Amount</span><span class="dv">$${Number(amount).toLocaleString()}</span></div>
+          <div class="wdm-row"><span class="dk">Currency</span><span class="dv">${esc(currency)}</span></div>
+          <div class="wdm-row"><span class="dk">Status</span><span class="dv">${esc(status)}</span></div>
+        `;
+
+        document.getElementById("wdmConfirmInput").value = "";
+        document.getElementById("wdmConfirmBtn").disabled = true;
+        document.getElementById("wdmResult").innerHTML = "";
+
+        const modal = document.getElementById("wdDeleteModal");
+        modal.classList.add("wdm-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => document.getElementById("wdmConfirmInput")?.focus(), 80);
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("wdDeleteModal").classList.remove("wdm-open");
+        document.getElementById("wdDeleteModal").setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        deletingWdId = null;
+      }
+
+      async function executeDelete() {
+        if (!deletingWdId) return;
+        if (document.getElementById("wdmConfirmInput")?.value !== "DELETE") return;
+
+        const btn      = document.getElementById("wdmConfirmBtn");
+        const resultEl = document.getElementById("wdmResult");
+        btn.disabled   = true;
+        btn.innerHTML  = "⏳ Deleting...";
+
+        try {
+          const res  = await fetch(`/api/admin/withdrawals/${deletingWdId}`, { method: "DELETE", credentials: "include" });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.success) throw new Error(data.message || "Delete failed");
+
+          resultEl.innerHTML = `<div class="wdm-ok">✅ Withdrawal deleted successfully.</div>`;
+          showToast("success", "Withdrawal deleted.");
+          setTimeout(() => { closeDeleteModal(); loadWithdrawals(); }, 1200);
+
+        } catch (err) {
+          resultEl.innerHTML = `<div class="wdm-err">❌ ${esc(err.message || "Delete failed.")}</div>`;
+          btn.disabled  = false;
+          btn.innerHTML = "🗑️ Delete Permanently";
+        }
+      }
+
+      // ── delete modal events ──
+      document.getElementById("wdmConfirmInput").addEventListener("input", e => {
+        document.getElementById("wdmConfirmBtn").disabled = e.target.value !== "DELETE";
+      });
+      document.getElementById("wdmCloseBtn").addEventListener("click",  closeDeleteModal);
+      document.getElementById("wdmCancelBtn").addEventListener("click", closeDeleteModal);
+      document.getElementById("wdmConfirmBtn").addEventListener("click", executeDelete);
+      document.getElementById("wdDeleteModal").addEventListener("click", e => {
+        if (e.target === document.getElementById("wdDeleteModal")) closeDeleteModal();
+      });
+      document.addEventListener("keydown", e => { if (e.key === "Escape") closeDeleteModal(); });
+
+      document.getElementById("searchInput").addEventListener("input", applyFilters);
+      document.getElementById("statusFilter").addEventListener("change", applyFilters);
+
+      loadWithdrawals();
+    </script>
+  </body>
+</html>

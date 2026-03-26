@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Users Investments</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+      th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+      td { padding: 0.85rem 1rem; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
+      tr:last-child td { border-bottom: none; }
+      tr:hover td { background: #fafafa; }
+
+      .badge { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+      .badge-active    { background: #dbeafe; color: #1e40af; }
+      .badge-completed { background: #d1fae5; color: #065f46; }
+      .badge-cancelled { background: #f3f4f6; color: #374151; }
+      .badge-expired   { background: #fee2e2; color: #991b1b; }
+
+      .btn { padding: 0.45rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
+      .btn-complete { background: #d1fae5; color: #065f46; } .btn-complete:hover { background: #a7f3d0; }
+      .btn-cancel   { background: #fee2e2; color: #991b1b; } .btn-cancel:hover   { background: #fecaca; }
+      .btn-delete   { background: #fef2f2; color: #7f1d1d; border: 1px solid #fca5a5; } .btn-delete:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+      .btn-ghost    { background: transparent; color: #6b7280; border: 1px solid #e5e7eb; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .empty { text-align: center; padding: 3rem; color: #9ca3af; }
+
+      /* Toolbar */
+      .toolbar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.25rem; }
+      .search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 340px; }
+      .search-wrap input {
+        width: 100%; padding: 0.48rem 0.9rem 0.48rem 2.2rem;
+        border: 1.5px solid #e5e7eb; border-radius: 8px;
+        font-size: 0.875rem; font-family: inherit; color: #111827;
+        outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        background: #fff;
+      }
+      .search-wrap input:focus { border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.08); }
+      .search-wrap .search-icon { position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.85rem; pointer-events: none; }
+      .search-wrap .search-clear { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 14px; display: none; line-height: 1; padding: 0; }
+      .search-wrap .search-clear.visible { display: block; }
+
+      .filter-btn { padding: 0.4rem 1rem; border-radius: 999px; border: 1.5px solid #e5e7eb; background: #fff; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
+      .filter-btn.active { background: #1e40af; color: #fff; border-color: #1e40af; }
+      .result-count { font-size: 0.8rem; color: #6b7280; margin-left: auto; white-space: nowrap; }
+
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+      .stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; }
+      .stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 0.35rem; }
+      .stat-value { font-size: 1.5rem; font-weight: 700; color: #111827; }
+      .expired-tag { font-size: 0.7rem; background: #fee2e2; color: #991b1b; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.4rem; font-weight: 600; }
+
+      /* Toast */
+      .toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+      .toast { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.2rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; min-width: 280px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); animation: slideIn 0.3s ease; }
+      .toast.success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+      .toast.error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+      .toast.warning { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+      @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+      /* Complete / Cancel confirm */
+      .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9998; display: flex; align-items: center; justify-content: center; }
+      .confirm-box { background: #fff; border-radius: 10px; padding: 1.75rem; max-width: 400px; width: 90%; }
+      .confirm-box h3 { margin: 0 0 0.5rem; }
+      .confirm-box p { color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem; }
+      .confirm-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+      /* ── Delete warning modal ── */
+      #invDeleteModal {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(3px);
+      }
+      #invDeleteModal.idm-open { display: flex !important; }
+      .idm-dialog {
+        background: #fff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 430px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+        animation: idmIn 0.2s ease;
+      }
+      @keyframes idmIn { from { opacity:0; transform:scale(0.95) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+      .idm-head { background: #fff1f2; border-bottom: 1px solid #fecdd3; padding: 18px 22px 14px; display: flex; align-items: flex-start; justify-content: space-between; }
+      .idm-head-left { display: flex; align-items: flex-start; gap: 12px; }
+      .idm-icon { width: 38px; height: 38px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+      .idm-title { font-size: 15px; font-weight: 700; color: #991b1b; margin: 0; }
+      .idm-sub   { font-size: 12px; color: #ef4444; margin: 3px 0 0; }
+      .idm-x { background: rgba(239,68,68,0.1); border: none; border-radius: 8px; color: #ef4444; width: 30px; height: 30px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .idm-x:hover { background: rgba(239,68,68,0.2); }
+      .idm-body { padding: 20px 22px 22px; }
+      .idm-warning { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 13px 15px; font-size: 13px; color: #92400e; line-height: 1.55; margin-bottom: 16px; }
+      .idm-warning strong { color: #c2410c; }
+      .idm-info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+      .idm-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; }
+      .idm-row .ik { color: #94a3b8; font-weight: 500; }
+      .idm-row .iv { color: #1e293b; font-weight: 600; }
+      .idm-input-wrap { margin-bottom: 18px; }
+      .idm-input-wrap label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+      .idm-input-wrap input { width: 100%; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 14px; font-family: inherit; color: #111827; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+      .idm-input-wrap input:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+      .idm-input-wrap small { font-size: 11px; color: #94a3b8; margin-top: 4px; display: block; }
+      .idm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .idm-cancel  { padding: 11px; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; color: #374151; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+      .idm-cancel:hover { background: #f3f4f6; }
+      .idm-confirm { padding: 11px; border-radius: 10px; border: none; background: #ef4444; color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s; }
+      .idm-confirm:hover { opacity: 0.88; }
+      .idm-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+      .idm-result { margin-top: 12px; }
+      .idm-ok  { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+      .idm-err { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+    </style>
+  </head>
+
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+    <header id="topnav-mount"></header>
+
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top:50px">
+          <h1>Users Investments</h1>
+          <p style="color:#6b7280;margin-top:-6px">Manually complete, cancel, or delete user investments.</p>
+
+          <!-- Stats -->
+          <div class="stats" id="statsRow">
+            <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="statTotal">—</div></div>
+            <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value" id="statActive">—</div></div>
+            <div class="stat-card"><div class="stat-label">Expired (pending)</div><div class="stat-value" id="statExpired" style="color:#991b1b">—</div></div>
+            <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">—</div></div>
+          </div>
+
+          <!-- Toolbar: search + filters -->
+          <div class="toolbar">
+            <!-- Search -->
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" placeholder="Search by name or email…" autocomplete="off" />
+              <button class="search-clear" id="searchClear" title="Clear">×</button>
+            </div>
+
+            <!-- Filter pills -->
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="expired">Expired</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+            <button class="btn-ghost" onclick="loadInvestments()">↺ Refresh</button>
+            <span class="result-count" id="resultCount"></span>
+          </div>
+
+          <div class="admin-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Plan</th>
+                    <th>Invested</th>
+                    <th>Return</th>
+                    <th>Profit</th>
+                    <th>Expires At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="investmentsTbody">
+                  <tr><td colspan="8" class="empty">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer id="footer-mount"></footer>
+
+    <!-- Delete Warning Modal -->
+    <div id="invDeleteModal" aria-hidden="true">
+      <div class="idm-dialog">
+        <div class="idm-head">
+          <div class="idm-head-left">
+            <div class="idm-icon">🗑️</div>
+            <div>
+              <div class="idm-title">Delete Investment</div>
+              <div class="idm-sub">This action cannot be undone</div>
+            </div>
+          </div>
+          <button class="idm-x" id="idmCloseBtn">×</button>
+        </div>
+        <div class="idm-body">
+          <div class="idm-warning">
+            ⚠️ You are about to <strong>permanently delete</strong> this investment record.
+            This will <strong>not</strong> automatically refund or credit the user's balance.
+            Make sure any balance adjustments have been handled separately before deleting.
+          </div>
+          <div class="idm-info" id="idmInfo"></div>
+          <div class="idm-input-wrap">
+            <label>Type <strong>DELETE</strong> to confirm</label>
+            <input type="text" id="idmConfirmInput" placeholder='Type "DELETE" here' autocomplete="off" />
+            <small>Case-sensitive.</small>
+          </div>
+          <div class="idm-actions">
+            <button class="idm-cancel" id="idmCancelBtn">Cancel</button>
+            <button class="idm-confirm" id="idmConfirmBtn" disabled>🗑️ Delete Permanently</button>
+          </div>
+          <div class="idm-result" id="idmResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      let allInvestments = [];
+      let currentFilter  = "all";
+      let searchQuery    = "";
+      let deletingInvId  = null;
+
+      // ── toast ──
+      function showToast(type, message) {
+        const container = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌", warning: "⚠️" };
+        t.innerHTML = `<span>${icons[type]}</span><span>${message}</span>
+          <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;opacity:0.6;">✕</button>`;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      // ── complete/cancel confirm ──
+      function showConfirm(title, message, confirmLabel, confirmClass, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.className = "confirm-overlay";
+        overlay.id = "confirmOverlay";
+        overlay.innerHTML = `
+          <div class="confirm-box">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="confirm-actions">
+              <button class="btn-ghost" onclick="document.getElementById('confirmOverlay').remove()">Cancel</button>
+              <button class="btn ${confirmClass}" id="confirmActionBtn">${confirmLabel}</button>
+            </div>
+          </div>`;
+        overlay.querySelector("#confirmActionBtn").onclick = () => { overlay.remove(); onConfirm(); };
+        document.body.appendChild(overlay);
+      }
+
+      function esc(str) {
+        return String(str ?? "").replace(/[&<>"']/g, m =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m]
+        );
+      }
+
+      function formatDate(d) { return d ? new Date(d).toLocaleString() : "—"; }
+
+      function isExpired(inv) {
+        return inv.status === "active" && inv.expires_at && new Date(inv.expires_at) <= new Date();
+      }
+
+      function statusBadge(inv) {
+        if (isExpired(inv))
+          return `<span class="badge badge-active">Active</span><span class="expired-tag">EXPIRED</span>`;
+        return `<span class="badge badge-${inv.status}">${inv.status.charAt(0).toUpperCase() + inv.status.slice(1)}</span>`;
+      }
+
+      function updateStats(investments) {
+        document.getElementById("statTotal").textContent     = investments.length;
+        document.getElementById("statActive").textContent    = investments.filter(i => i.status === "active").length;
+        document.getElementById("statExpired").textContent   = investments.filter(i => isExpired(i)).length;
+        document.getElementById("statCompleted").textContent = investments.filter(i => i.status === "completed").length;
+      }
+
+      // ── render with filter + search ──
+      function renderTable() {
+        const tbody = document.getElementById("investmentsTbody");
+
+        let filtered = allInvestments;
+
+        // status filter
+        if (currentFilter === "active")    filtered = filtered.filter(i => i.status === "active" && !isExpired(i));
+        else if (currentFilter === "expired")   filtered = filtered.filter(i => isExpired(i));
+        else if (currentFilter === "completed") filtered = filtered.filter(i => i.status === "completed");
+        else if (currentFilter === "cancelled") filtered = filtered.filter(i => i.status === "cancelled");
+
+        // search filter
+        if (searchQuery.trim()) {
+          const q = searchQuery.trim().toLowerCase();
+          filtered = filtered.filter(i => {
+            const name  = (i.user?.name  || "").toLowerCase();
+            const email = (i.user?.email || "").toLowerCase();
+            return name.includes(q) || email.includes(q);
+          });
+        }
+
+        // result count
+        document.getElementById("resultCount").textContent =
+          filtered.length === allInvestments.length
+            ? `${filtered.length} total`
+            : `${filtered.length} of ${allInvestments.length}`;
+
+        if (!filtered.length) {
+          tbody.innerHTML = `<tr><td colspan="8" class="empty">${searchQuery ? `No results for "${esc(searchQuery)}"` : "No investments found."}</td></tr>`;
+          return;
+        }
+
+        const profit = inv => ((inv.return_amount || 0) - (inv.amount || 0)).toFixed(2);
+
+        tbody.innerHTML = filtered.map(inv => `
+          <tr>
+            <td>
+              <div style="font-weight:600;">${esc(inv.user?.name || "—")}</div>
+              <div style="font-size:0.75rem;color:#6b7280;">${esc(inv.user?.email || "")}</div>
+            </td>
+            <td>${esc(inv.plan?.name || "—")}</td>
+            <td><strong>$${inv.amount}</strong></td>
+            <td style="color:#065f46;font-weight:600;">$${inv.return_amount ?? "—"}</td>
+            <td style="color:#1d4ed8;">+$${profit(inv)}</td>
+            <td>
+              ${inv.expires_at
+                ? `${formatDate(inv.expires_at)}${isExpired(inv) ? ' <span style="color:#ef4444;font-size:0.75rem;">⚠ Expired</span>' : ""}`
+                : "—"}
+            </td>
+            <td>${statusBadge(inv)}</td>
+            <td>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${inv.status === "active" ? `
+                  <button class="btn btn-complete" onclick="handleComplete('${inv._id}','${esc(inv.user?.name || "")}',${inv.return_amount})">Complete</button>
+                  <button class="btn btn-cancel"   onclick="handleCancel('${inv._id}','${esc(inv.user?.name || "")}')">Cancel</button>
+                ` : ""}
+                <button class="btn btn-delete" onclick="openDeleteModal('${inv._id}','${esc(inv.user?.name || "Unknown")}','${esc(inv.user?.email || "")}','${esc(inv.plan?.name || "—")}',${inv.amount},${inv.return_amount ?? 0},'${inv.status}')">🗑 Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // ── load ──
+      async function loadInvestments() {
+        document.getElementById("investmentsTbody").innerHTML = `<tr><td colspan="8" class="empty">Loading...</td></tr>`;
+        try {
+          const res = await fetch("/api/investment/admin/all", { credentials: "include" });
+          const { success, data } = await res.json();
+          if (!success) throw new Error();
+          allInvestments = data;
+          updateStats(data);
+          renderTable();
+        } catch {
+          document.getElementById("investmentsTbody").innerHTML =
+            `<tr><td colspan="8" class="empty">Failed to load investments.</td></tr>`;
+        }
+      }
+
+      // ── complete ──
+      function handleComplete(investmentId, userName, returnAmount) {
+        showConfirm(
+          "Complete Investment",
+          `Credit $${returnAmount} to ${userName}'s balance? This cannot be undone.`,
+          "Complete", "btn-complete",
+          async () => {
+            try {
+              const res = await fetch(`/api/investment/admin/${investmentId}/complete`, { method: "PATCH", credentials: "include" });
+              const { success, message } = await res.json();
+              if (!success) throw new Error(message);
+              showToast("success", `Investment completed. $${returnAmount} credited.`);
+              loadInvestments();
+            } catch (err) { showToast("error", err.message || "Failed to complete investment"); }
+          }
+        );
+      }
+
+      // ── cancel ──
+      function handleCancel(investmentId, userName) {
+        showConfirm(
+          "Cancel Investment",
+          `Cancel this investment for ${userName}? The original amount will be refunded.`,
+          "Cancel Investment", "btn-cancel",
+          async () => {
+            try {
+              const res = await fetch(`/api/investment/admin/${investmentId}/cancel`, { method: "PATCH", credentials: "include" });
+              const { success, message } = await res.json();
+              if (!success) throw new Error(message);
+              showToast("success", "Investment cancelled and amount refunded.");
+              loadInvestments();
+            } catch (err) { showToast("error", err.message || "Failed to cancel investment"); }
+          }
+        );
+      }
+
+      // ── delete modal ──
+      function openDeleteModal(id, name, email, plan, amount, returnAmount, status) {
+        deletingInvId = id;
+
+        document.getElementById("idmInfo").innerHTML = `
+          <div class="idm-row"><span class="ik">User</span><span class="iv">${esc(name)}</span></div>
+          <div class="idm-row"><span class="ik">Email</span><span class="iv">${esc(email)}</span></div>
+          <div class="idm-row"><span class="ik">Plan</span><span class="iv">${esc(plan)}</span></div>
+          <div class="idm-row"><span class="ik">Invested</span><span class="iv">$${amount}</span></div>
+          <div class="idm-row"><span class="ik">Return</span><span class="iv">$${returnAmount}</span></div>
+          <div class="idm-row"><span class="ik">Status</span><span class="iv">${esc(status)}</span></div>
+        `;
+
+        document.getElementById("idmConfirmInput").value = "";
+        document.getElementById("idmConfirmBtn").disabled = true;
+        document.getElementById("idmResult").innerHTML = "";
+
+        const modal = document.getElementById("invDeleteModal");
+        modal.classList.add("idm-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => document.getElementById("idmConfirmInput")?.focus(), 80);
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("invDeleteModal").classList.remove("idm-open");
+        document.getElementById("invDeleteModal").setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        deletingInvId = null;
+      }
+
+      async function executeDelete() {
+        if (!deletingInvId) return;
+        if (document.getElementById("idmConfirmInput")?.value !== "DELETE") return;
+
+        const btn      = document.getElementById("idmConfirmBtn");
+        const resultEl = document.getElementById("idmResult");
+        btn.disabled   = true;
+        btn.innerHTML  = "⏳ Deleting...";
+
+        try {
+          const res  = await fetch(`/api/investment/admin/${deletingInvId}`, { method: "DELETE", credentials: "include" });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.success) throw new Error(data.message || "Delete failed");
+
+          resultEl.innerHTML = `<div class="idm-ok">✅ Investment deleted successfully.</div>`;
+          showToast("success", "Investment deleted.");
+          setTimeout(() => { closeDeleteModal(); loadInvestments(); }, 1200);
+
+        } catch (err) {
+          resultEl.innerHTML = `<div class="idm-err">❌ ${esc(err.message || "Delete failed.")}</div>`;
+          btn.disabled  = false;
+          btn.innerHTML = "🗑️ Delete Permanently";
+        }
+      }
+
+      // ── delete modal events ──
+      document.getElementById("idmConfirmInput").addEventListener("input", e => {
+        document.getElementById("idmConfirmBtn").disabled = e.target.value !== "DELETE";
+      });
+      document.getElementById("idmCloseBtn").addEventListener("click",  closeDeleteModal);
+      document.getElementById("idmCancelBtn").addEventListener("click", closeDeleteModal);
+      document.getElementById("idmConfirmBtn").addEventListener("click", executeDelete);
+      document.getElementById("invDeleteModal").addEventListener("click", e => {
+        if (e.target === document.getElementById("invDeleteModal")) closeDeleteModal();
+      });
+      document.addEventListener("keydown", e => { if (e.key === "Escape") closeDeleteModal(); });
+
+      // ── search ──
+      const searchInput = document.getElementById("searchInput");
+      const searchClear = document.getElementById("searchClear");
+
+      searchInput.addEventListener("input", () => {
+        searchQuery = searchInput.value;
+        searchClear.classList.toggle("visible", !!searchQuery);
+        renderTable();
+      });
+      searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        searchQuery = "";
+        searchClear.classList.remove("visible");
+        searchInput.focus();
+        renderTable();
+      });
+
+      // ── filter pills ──
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentFilter = btn.dataset.filter;
+          renderTable();
+        });
+      });
+
+      loadInvestments();
+    </script>
+  </body>
+</html>

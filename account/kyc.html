@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Identity Verification - Batrus Trades</title>
+
+  <link rel="icon" href="/assets/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/account/argon.css">
+
+  <style>
+    .main-content { margin-left: 250px; transition: margin-left 0.3s ease; }
+    @media (max-width: 1199px) { .main-content { margin-left: 0; } }
+
+    /* ── Preloader ── */
+    #page-preloader {
+      position: fixed; inset: 0; background: #fff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999; transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #page-preloader.fade-out { opacity: 0; visibility: hidden; }
+    .preloader-logo { height: 56px; margin-bottom: 28px; animation: pulse-logo 1.6s ease-in-out infinite; }
+    @keyframes pulse-logo { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.06);opacity:.8} }
+    .preloader-bar-wrap { width: 200px; height: 4px; background: #e9ecef; border-radius: 99px; overflow: hidden; }
+    .preloader-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#f5a623,#ffd166); border-radius: 99px; animation: bar-fill 1.8s ease forwards; }
+    @keyframes bar-fill { 0%{width:0%} 60%{width:75%} 100%{width:100%} }
+    .preloader-text { margin-top: 14px; font-family:'Open Sans',sans-serif; font-size:.78rem; font-weight:600; color:#8898aa; letter-spacing:.08em; text-transform:uppercase; }
+
+    /* ── Toast ── */
+    .toast-box {
+      position: fixed; top: 28px; right: 28px; padding: 13px 22px;
+      border-radius: 6px; font-size:.875rem; font-weight:600;
+      font-family:'Open Sans',sans-serif; box-shadow:0 4px 20px rgba(0,0,0,.15);
+      opacity:0; transform:translateY(-10px); transition:opacity .35s,transform .35s;
+      z-index:99999; pointer-events:none; max-width:320px;
+    }
+    .toast-box.show { opacity:1; transform:translateY(0); }
+
+    /* ── KYC Container ── */
+    .kyc-wrap { max-width: 780px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    /* ── State Cards ── */
+    .kyc-state-card {
+      border-radius: 16px; padding: 48px 40px; text-align: center;
+      animation: fadeUp .5s ease both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Approved */
+    .kyc-approved {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #86efac;
+    }
+    .kyc-approved .state-icon {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 32px rgba(34,197,94,.3);
+      animation: pop .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+    .kyc-approved .state-icon i { color: #fff; font-size: 36px; }
+    .kyc-approved h2 { font-family:'Open Sans',sans-serif; font-size:1.5rem; font-weight:700; color:#15803d; margin-bottom:10px; }
+    .kyc-approved p { color:#166534; font-size:.95rem; line-height:1.7; margin-bottom:0; }
+    .kyc-approved .verified-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #22c55e; color: #fff; padding: 8px 20px;
+      border-radius: 999px; font-size:.8rem; font-weight:700;
+      letter-spacing:.05em; text-transform:uppercase; margin-top:20px;
+    }
+
+    .kyc-approved .detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 28px; text-align: left;
+    }
+    .kyc-approved .detail-item {
+      background: rgba(255,255,255,.7); border-radius: 10px;
+      padding: 12px 16px; border: 1px solid #bbf7d0;
+    }
+    .kyc-approved .detail-item .label {
+      font-size:.7rem; font-weight:700; color:#86efac;
+      text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;
+    }
+    .kyc-approved .detail-item .value { font-size:.875rem; font-weight:600; color:#166534; }
+
+    /* Pending */
+    .kyc-pending {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border: 2px solid #fcd34d;
+    }
+    .kyc-pending .state-icon {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 32px rgba(245,158,11,.3);
+      animation: pulse-ring 2s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%,100%{box-shadow:0 8px 32px rgba(245,158,11,.3)}
+      50%{box-shadow:0 8px 48px rgba(245,158,11,.6),0 0 0 12px rgba(245,158,11,.1)}
+    }
+    .kyc-pending .state-icon i { color:#fff; font-size:36px; }
+    .kyc-pending h2 { font-family:'Open Sans',sans-serif; font-size:1.5rem; font-weight:700; color:#92400e; margin-bottom:10px; }
+    .kyc-pending p { color:#78350f; font-size:.95rem; line-height:1.7; margin-bottom:0; }
+    .kyc-pending .status-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      background:#f59e0b; color:#fff; padding:8px 20px;
+      border-radius:999px; font-size:.8rem; font-weight:700;
+      letter-spacing:.05em; text-transform:uppercase; margin-top:20px;
+    }
+    .kyc-pending .status-pill::before {
+      content:''; width:8px; height:8px; border-radius:50%;
+      background:#fff; animation:blink 1.2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── KYC Form ── */
+    .kyc-form-card {
+      background: #fff; border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 24px rgba(0,0,0,.06);
+      overflow: hidden; animation: fadeUp .5s ease both;
+    }
+
+    .kyc-form-header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 28px 36px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .kyc-form-header .header-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .kyc-form-header .header-icon i { color: #f59e0b; font-size: 20px; }
+    .kyc-form-header h3 { color: #fff; font-family:'Open Sans',sans-serif; font-size:1.1rem; font-weight:700; margin:0 0 4px; }
+    .kyc-form-header p { color:rgba(255,255,255,.5); font-size:.8rem; margin:0; }
+
+    /* Rejection banner */
+    .rejection-banner {
+      background: #fef2f2; border-left: 4px solid #ef4444;
+      padding: 16px 20px; margin: 24px 28px 0;
+      border-radius: 0 8px 8px 0;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .rejection-banner i { color: #ef4444; font-size: 18px; flex-shrink:0; margin-top:2px; }
+    .rejection-banner .rej-title { font-weight:700; color:#dc2626; font-size:.875rem; margin-bottom:4px; }
+    .rejection-banner .rej-reason { color:#7f1d1d; font-size:.85rem; line-height:1.6; }
+
+    /* Steps indicator */
+    .kyc-steps {
+      display: flex; align-items: center; padding: 20px 28px;
+      border-bottom: 1px solid #f1f5f9; gap: 0;
+    }
+    .kyc-step {
+      display: flex; align-items: center; gap: 8px; flex: 1;
+    }
+    .kyc-step .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #e2e8f0; color: #94a3b8;
+      font-size:.75rem; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; transition:all .3s;
+    }
+    .kyc-step.active .step-num { background:#f59e0b; color:#fff; }
+    .kyc-step.done .step-num { background:#22c55e; color:#fff; }
+    .kyc-step .step-label { font-size:.75rem; font-weight:600; color:#94a3b8; transition:color .3s; }
+    .kyc-step.active .step-label { color:#f59e0b; }
+    .kyc-step.done .step-label { color:#22c55e; }
+    .kyc-step-line { flex:1; height:2px; background:#e2e8f0; margin:0 8px; }
+    .kyc-step-line.done { background:#22c55e; }
+
+    /* Form body */
+    .kyc-form-body { padding: 28px; }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; animation: fadeUp .4s ease both; }
+
+    .section-title {
+      font-family:'Open Sans',sans-serif; font-size:.8rem; font-weight:700;
+      color:#94a3b8; text-transform:uppercase; letter-spacing:.1em;
+      margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #f1f5f9;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section-title i { color:#f59e0b; }
+
+    .form-group label {
+      font-size:.75rem; font-weight:700; color:#525f7f;
+      text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;
+    }
+    .form-control {
+      border:1px solid #dee2e6; border-radius:8px;
+      padding:.6rem 1rem; font-size:.875rem; color:#2d3748;
+      transition:border-color .2s, box-shadow .2s;
+      font-family:'Open Sans',sans-serif;
+    }
+    .form-control:focus {
+      border-color:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.15);
+      outline:none;
+    }
+    select.form-control { cursor:pointer; }
+
+    /* Upload zones */
+    .upload-zone {
+      border: 2px dashed #e2e8f0; border-radius: 12px;
+      padding: 28px 20px; text-align: center; cursor: pointer;
+      transition: all .25s; position: relative; overflow: hidden;
+      background: #fafbfc;
+    }
+    .upload-zone:hover { border-color:#f59e0b; background:#fffbeb; }
+    .upload-zone.has-file { border-color:#22c55e; background:#f0fdf4; border-style:solid; }
+    .upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .upload-zone .uz-icon { font-size:28px; color:#cbd5e0; margin-bottom:10px; transition:color .25s; }
+    .upload-zone:hover .uz-icon, .upload-zone.has-file .uz-icon { color:#f59e0b; }
+    .upload-zone.has-file .uz-icon { color:#22c55e; }
+    .upload-zone .uz-label { font-size:.8rem; font-weight:600; color:#718096; display:block; margin-bottom:4px; }
+    .upload-zone.has-file .uz-label { color:#15803d; }
+    .upload-zone .uz-hint { font-size:.72rem; color:#a0aec0; }
+    .upload-preview {
+      width:100%; max-height:120px; object-fit:cover;
+      border-radius:8px; margin-bottom:10px; display:none;
+    }
+
+    /* Nav buttons */
+    .kyc-nav { display:flex; justify-content:space-between; align-items:center; margin-top:28px; padding-top:20px; border-top:1px solid #f1f5f9; }
+    .btn-kyc-prev { background:#f8fafc; border:1px solid #e2e8f0; color:#718096; padding:10px 24px; border-radius:8px; font-size:.875rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .btn-kyc-prev:hover { background:#e2e8f0; color:#2d3748; }
+    .btn-kyc-next, .btn-kyc-submit {
+      background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff;
+      border:none; padding:11px 28px; border-radius:8px;
+      font-size:.875rem; font-weight:700; cursor:pointer; transition:all .2s;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn-kyc-next:hover, .btn-kyc-submit:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(245,158,11,.4); }
+    .btn-kyc-submit { background:linear-gradient(135deg,#22c55e,#16a34a); }
+    .btn-kyc-submit:hover { box-shadow:0 6px 20px rgba(34,197,94,.4); }
+    .btn-kyc-submit:disabled { opacity:.6; pointer-events:none; }
+
+    /* Progress dots */
+    .step-progress { display:flex; gap:6px; align-items:center; }
+    .step-dot { width:8px; height:8px; border-radius:50%; background:#e2e8f0; transition:all .3s; }
+    .step-dot.active { background:#f59e0b; width:20px; border-radius:4px; }
+    .step-dot.done { background:#22c55e; }
+
+    @media (max-width: 576px) {
+      .kyc-form-header { padding:20px; }
+      .kyc-form-body { padding:20px; }
+      .kyc-state-card { padding:32px 20px; }
+      .kyc-approved .detail-grid { grid-template-columns:1fr; }
+      .kyc-steps { padding:16px; }
+      .kyc-step .step-label { display:none; }
+    }
+  </style>
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="page-preloader">
+    <img src="/assets/images/logo.png" class="preloader-logo" alt="Batrus Trades">
+    <div class="preloader-bar-wrap"><div class="preloader-bar"></div></div>
+    <div class="preloader-text">Loading KYC...</div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-box" id="toast"></div>
+
+  <!-- Sidenav -->
+  <div id="sidenav-mount"></div>
+
+  <div class="main-content" id="panel">
+    <div id="topnav-mount"></div>
+
+    <div class="kyc-wrap">
+
+      <!-- ── PAGE TITLE ── -->
+      <div class="mb-4">
+        <h4 style="font-family:'Open Sans',sans-serif;font-weight:700;color:#1e293b;margin-bottom:4px;">
+          <i class="fa fa-id-card-o mr-2" style="color:#f59e0b;"></i> Identity Verification
+        </h4>
+        <p style="color:#94a3b8;font-size:.875rem;margin:0;">
+          Complete KYC to unlock full platform access
+        </p>
+      </div>
+
+      <!-- ── DYNAMIC CONTENT — injected by JS ── -->
+      <div id="kyc-content">
+        <!-- loading skeleton -->
+        <div style="background:#f8fafc;border-radius:16px;padding:48px;text-align:center;border:1px solid #e2e8f0;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#e2e8f0;margin:0 auto 16px;animation:pulse-logo 1.5s infinite;"></div>
+          <div style="width:160px;height:12px;background:#e2e8f0;border-radius:6px;margin:0 auto 10px;"></div>
+          <div style="width:240px;height:10px;background:#f1f5f9;border-radius:6px;margin:0 auto;"></div>
+        </div>
+      </div>
+
+    </div><!-- /kyc-wrap -->
+  </div><!-- /main-content -->
+
+  <!-- Scripts -->
+  <script src="/auth-script/load-sidenav.js"></script>
+  <script src="/auth-script/load-topnav.js"></script>
+  <script src="/auth-script/load-user-data.js"></script>
+  <script src="/auth-script/checkAuth.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+
+  <script>
+    /* ── Preloader ── */
+    window.addEventListener('load', function () {
+      const pre = document.getElementById('page-preloader');
+      setTimeout(() => {
+        pre.classList.add('fade-out');
+        setTimeout(() => pre.style.display = 'none', 500);
+      }, 400);
+    });
+
+    /* ── Toast ── */
+    let toastTimeout;
+    function showToast(msg, success = true) {
+      clearTimeout(toastTimeout);
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = success ? '#22c55e' : '#f5365c';
+      t.style.color = '#fff';
+      t.classList.add('show');
+      toastTimeout = setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    /* ── MULTI-STEP FORM STATE ── */
+    let currentStep = 1;
+    const TOTAL_STEPS = 3;
+
+    function goToStep(step) {
+      // update sections
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+
+      // update step indicators
+      document.querySelectorAll('.kyc-step').forEach((el, idx) => {
+        el.classList.remove('active', 'done');
+        if (idx + 1 < step) el.classList.add('done');
+        if (idx + 1 === step) el.classList.add('active');
+      });
+      document.querySelectorAll('.kyc-step-line').forEach((el, idx) => {
+        el.classList.toggle('done', idx + 1 < step);
+      });
+
+      // update progress dots
+      document.querySelectorAll('.step-dot').forEach((el, idx) => {
+        el.classList.remove('active', 'done');
+        if (idx + 1 < step) el.classList.add('done');
+        if (idx + 1 === step) el.classList.add('active');
+      });
+
+      // toggle buttons
+      document.getElementById('btn-prev').style.display  = step === 1 ? 'none' : '';
+      document.getElementById('btn-next').style.display  = step < TOTAL_STEPS ? '' : 'none';
+      document.getElementById('btn-submit').style.display = step === TOTAL_STEPS ? '' : 'none';
+
+      currentStep = step;
+    }
+
+    function validateStep(step) {
+      const fields = document.querySelectorAll(`#step-${step} [required]`);
+      let ok = true;
+      fields.forEach(f => {
+        f.classList.remove('is-invalid');
+        if (!f.value.trim()) { f.classList.add('is-invalid'); ok = false; }
+      });
+      return ok;
+    }
+
+    /* ── FILE UPLOAD PREVIEW ── */
+    function setupUpload(inputId, previewId, zoneId, labelId) {
+      const input   = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      const zone    = document.getElementById(zoneId);
+      const label   = document.getElementById(labelId);
+
+      if (!input) return;
+      input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        zone.classList.add('has-file');
+        label.textContent = file.name.length > 28 ? file.name.substring(0, 25) + '...' : file.name;
+
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+          reader.readAsDataURL(file);
+        } else {
+          preview.style.display = 'none';
+          label.textContent = '✔ ' + file.name.substring(0, 25);
+        }
+      });
+    }
+
+    /* ── RENDER APPROVED STATE ── */
+    function renderApproved(kyc) {
+      const dob = kyc.dob ? new Date(kyc.dob).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '—';
+      const reviewed = kyc.reviewedAt ? new Date(kyc.reviewedAt).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '—';
+
+      document.getElementById('kyc-content').innerHTML = `
+        <div class="kyc-state-card kyc-approved">
+          <div class="state-icon"><i class="fa fa-check"></i></div>
+          <h2>Identity Verified</h2>
+          <p>Your identity has been successfully verified. You now have full access to all platform features including deposits, withdrawals, and transfers.</p>
+          <div class="verified-badge"><i class="fa fa-shield"></i> KYC Approved</div>
+
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="label">Full Name</div>
+              <div class="value">${kyc.fullName || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Date of Birth</div>
+              <div class="value">${dob}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Country</div>
+              <div class="value">${kyc.country || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">ID Type</div>
+              <div class="value">${kyc.idType || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">ID Number</div>
+              <div class="value">${kyc.idNumber || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="label">Verified On</div>
+              <div class="value">${reviewed}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ── RENDER PENDING STATE ── */
+    function renderPending(kyc) {
+      const submitted = kyc.createdAt ? new Date(kyc.createdAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—';
+      document.getElementById('kyc-content').innerHTML = `
+        <div class="kyc-state-card kyc-pending">
+          <div class="state-icon"><i class="fa fa-clock-o"></i></div>
+          <h2>Verification Under Review</h2>
+          <p>Your KYC documents have been submitted and are currently being reviewed by our team. This usually takes 1–3 business days. You'll receive an email once a decision is made.</p>
+          <div class="status-pill">Under Review</div>
+          <p style="margin-top:16px;font-size:.8rem;color:#92400e;">Submitted on ${submitted}</p>
+        </div>
+      `;
+    }
+
+    /* ── RENDER FORM (new or rejected) ── */
+    function renderForm(rejectionReason) {
+      document.getElementById('kyc-content').innerHTML = `
+        <div class="kyc-form-card">
+
+          <div class="kyc-form-header">
+            <div class="header-icon"><i class="fa fa-id-card-o"></i></div>
+            <div>
+              <h3>Identity Verification</h3>
+              <p>Step-by-step — takes about 3 minutes</p>
+            </div>
+          </div>
+
+          ${rejectionReason ? `
+            <div class="rejection-banner">
+              <i class="fa fa-exclamation-circle"></i>
+              <div>
+                <div class="rej-title">Previous Submission Rejected</div>
+                <div class="rej-reason">${rejectionReason}</div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Steps -->
+          <div class="kyc-steps">
+            <div class="kyc-step active" id="indicator-1">
+              <div class="step-num">1</div>
+              <div class="step-label">Personal Info</div>
+            </div>
+            <div class="kyc-step-line" id="line-1"></div>
+            <div class="kyc-step" id="indicator-2">
+              <div class="step-num">2</div>
+              <div class="step-label">ID Details</div>
+            </div>
+            <div class="kyc-step-line" id="line-2"></div>
+            <div class="kyc-step" id="indicator-3">
+              <div class="step-num">3</div>
+              <div class="step-label">Documents</div>
+            </div>
+          </div>
+
+          <div class="kyc-form-body">
+            <form id="kyc-form" enctype="multipart/form-data">
+
+              <!-- ── STEP 1: Personal Info ── -->
+              <div class="form-section active" id="step-1">
+                <div class="section-title"><i class="fa fa-user"></i> Personal Information</div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Full Legal Name</label>
+                    <input type="text" class="form-control" name="fullName" placeholder="As on your ID" required>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" class="form-control" name="dob" required>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" name="phone" placeholder="+1 234 567 8900" required>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Country</label>
+                    <select class="form-control" name="country" required>
+                      <option value="">Select country...</option>
+                      <option>Afghanistan</option><option>Albania</option><option>Algeria</option>
+                      <option>Argentina</option><option>Australia</option><option>Austria</option>
+                      <option>Bangladesh</option><option>Belgium</option><option>Brazil</option>
+                      <option>Canada</option><option>Chile</option><option>China</option>
+                      <option>Colombia</option><option>Croatia</option><option>Czech Republic</option>
+                      <option>Denmark</option><option>Egypt</option><option>Ethiopia</option>
+                      <option>Finland</option><option>France</option><option>Germany</option>
+                      <option>Ghana</option><option>Greece</option><option>Hungary</option>
+                      <option>India</option><option>Indonesia</option><option>Iran</option>
+                      <option>Iraq</option><option>Ireland</option><option>Israel</option>
+                      <option>Italy</option><option>Jamaica</option><option>Japan</option>
+                      <option>Jordan</option><option>Kenya</option><option>Malaysia</option>
+                      <option>Mexico</option><option>Morocco</option><option>Netherlands</option>
+                      <option>New Zealand</option><option>Nigeria</option><option>Norway</option>
+                      <option>Pakistan</option><option>Peru</option><option>Philippines</option>
+                      <option>Poland</option><option>Portugal</option><option>Romania</option>
+                      <option>Russia</option><option>Saudi Arabia</option><option>Senegal</option>
+                      <option>Singapore</option><option>South Africa</option><option>South Korea</option>
+                      <option>Spain</option><option>Sri Lanka</option><option>Sweden</option>
+                      <option>Switzerland</option><option>Tanzania</option><option>Thailand</option>
+                      <option>Turkey</option><option>Uganda</option><option>Ukraine</option>
+                      <option>United Arab Emirates</option><option>United Kingdom</option>
+                      <option>United States</option><option>Venezuela</option><option>Vietnam</option>
+                      <option>Zimbabwe</option>
+                    </select>
+                  </div>
+                  <div class="col-12 form-group">
+                    <label>Residential Address</label>
+                    <input type="text" class="form-control" name="address" placeholder="Street, City, State / Province" required>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── STEP 2: ID Details ── -->
+              <div class="form-section" id="step-2">
+                <div class="section-title"><i class="fa fa-credit-card"></i> ID Information</div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>ID Type</label>
+                    <select class="form-control" name="idType" required>
+                      <option value="">Select ID type...</option>
+                      <option value="Passport">Passport</option>
+                      <option value="NationalID">National ID Card</option>
+                      <option value="DriverLicense">Driver's License</option>
+                      <option value="ResidencePermit">Residence Permit</option>
+                      <option value="VoterID">Voter ID</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>ID Number</label>
+                    <input type="text" class="form-control" name="idNumber" placeholder="Document number" required>
+                  </div>
+                </div>
+
+                <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:14px 16px;margin-top:8px;">
+                  <p style="font-size:.8rem;color:#92400e;margin:0;line-height:1.6;">
+                    <i class="fa fa-info-circle mr-1" style="color:#f59e0b;"></i>
+                    <strong>Important:</strong> Make sure your ID is valid, not expired, and matches the personal details you entered in step 1.
+                  </p>
+                </div>
+              </div>
+
+              <!-- ── STEP 3: Documents ── -->
+              <div class="form-section" id="step-3">
+                <div class="section-title"><i class="fa fa-camera"></i> Upload Documents</div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>ID Document <span style="color:#ef4444;">*</span></label>
+                    <div class="upload-zone" id="zone-id">
+                      <input type="file" id="input-id" name="idDocument" accept="image/*,application/pdf" required>
+                      <img class="upload-preview" id="preview-id" alt="ID preview">
+                      <div class="uz-icon"><i class="fa fa-id-card-o"></i></div>
+                      <span class="uz-label" id="label-id">Click or drag your ID here</span>
+                      <span class="uz-hint">JPG, PNG, WEBP or PDF · Max 5MB</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Selfie with ID <span style="color:#ef4444;">*</span></label>
+                    <div class="upload-zone" id="zone-selfie">
+                      <input type="file" id="input-selfie" name="selfie" accept="image/*" required>
+                      <img class="upload-preview" id="preview-selfie" alt="Selfie preview">
+                      <div class="uz-icon"><i class="fa fa-camera"></i></div>
+                      <span class="uz-label" id="label-selfie">Click or drag your selfie here</span>
+                      <span class="uz-hint">Hold your ID next to your face · JPG/PNG · Max 5MB</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px 16px;margin-top:8px;">
+                  <p style="font-size:.8rem;color:#166534;margin:0;line-height:1.6;">
+                    <i class="fa fa-lock mr-1" style="color:#22c55e;"></i>
+                    Your documents are encrypted and stored securely. They are only used for identity verification purposes.
+                  </p>
+                </div>
+              </div>
+
+              <!-- ── NAV ── -->
+              <div class="kyc-nav">
+                <div class="step-progress">
+                  <div class="step-dot active" id="dot-1"></div>
+                  <div class="step-dot" id="dot-2"></div>
+                  <div class="step-dot" id="dot-3"></div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;">
+                  <button type="button" class="btn-kyc-prev" id="btn-prev" style="display:none;" onclick="goToStep(currentStep - 1)">
+                    <i class="fa fa-arrow-left mr-1"></i> Back
+                  </button>
+                  <button type="button" class="btn-kyc-next" id="btn-next" onclick="handleNext()">
+                    Continue <i class="fa fa-arrow-right ml-1"></i>
+                  </button>
+                  <button type="submit" class="btn-kyc-submit" id="btn-submit" style="display:none;">
+                    <i class="fa fa-paper-plane mr-1"></i> Submit KYC
+                  </button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      `;
+
+      // Setup upload previews
+      setupUpload('input-id',     'preview-id',     'zone-id',     'label-id');
+      setupUpload('input-selfie', 'preview-selfie', 'zone-selfie', 'label-selfie');
+
+      // Form submit
+      document.getElementById('kyc-form').addEventListener('submit', handleSubmit);
+    }
+
+    /* ── NEXT BUTTON ── */
+    function handleNext() {
+      if (!validateStep(currentStep)) {
+        showToast('Please fill all required fields', false);
+        return;
+      }
+      goToStep(currentStep + 1);
+    }
+
+    /* ── SUBMIT ── */
+    async function handleSubmit(e) {
+      e.preventDefault();
+
+      const idFile     = document.getElementById('input-id')?.files[0];
+      const selfieFile = document.getElementById('input-selfie')?.files[0];
+
+      if (!idFile || !selfieFile) {
+        showToast('Please upload both documents', false);
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> Submitting...';
+
+      const form = document.getElementById('kyc-form');
+      const fd   = new FormData(form);
+
+      try {
+        const res  = await fetch('/api/kyc/submit', {
+          method: 'POST',
+          body: fd,
+          credentials: 'include',
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showToast('✅ KYC submitted successfully!', true);
+          setTimeout(() => renderPending({ createdAt: new Date() }), 1200);
+        } else {
+          showToast(data.message || 'Submission failed', false);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-paper-plane mr-1"></i> Submit KYC';
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Network error. Please try again.', false);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-paper-plane mr-1"></i> Submit KYC';
+      }
+    }
+
+    /* ── INIT: check KYC status ── */
+    async function initKYC() {
+      try {
+        const res  = await fetch('/api/kyc/status', { credentials: 'include' });
+
+        if (res.status === 404) {
+          // no submission yet
+          renderForm(null);
+          return;
+        }
+
+        const data = await res.json();
+        const kyc  = data.kyc;
+
+        if (kyc.status === 'approved') {
+          renderApproved(kyc);
+        } else if (kyc.status === 'pending') {
+          renderPending(kyc);
+        } else if (kyc.status === 'rejected') {
+          renderForm(kyc.rejectionReason || 'Your submission did not meet our requirements. Please resubmit with clear, valid documents.');
+        } else {
+          renderForm(null);
+        }
+      } catch (err) {
+        console.error('KYC init error:', err);
+        renderForm(null);
+      }
+    }
+
+    // Run after DOM ready
+    document.addEventListener('DOMContentLoaded', initKYC);
+  </script>
+
+
+
+</body>
+</html> 

@@ -1,0 +1,79 @@
+<nav
+  class="navbar navbar-top navbar-expand navbar-light bg-primary border-bottom"
+>
+  <div class="container-fluid">
+    <div
+      class="collapse navbar-collapse d-flex justify-content-between"
+      id="navbarSupportedContent"
+    >
+      <div class="d-flex align-items-center">
+        <!-- Sidenav toggler — visible on mobile only, calls toggleSidenav() -->
+        <div class="nav-item d-md-none ml-2">
+          <div
+            class="pr-3 sidenav-toggler sidenav-toggler-dark"
+            onclick="toggleSidenav()"
+            style="cursor: pointer"
+          >
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="navbar-text p-0 mr-3">
+          <div id="flash">
+            <div
+              class="alert alert-dark m-0 text-dark"
+              role="alert"
+              style="background-color: unset"
+            >
+              Welcome Back <span class="user-username"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav align-items-center ml-auto ml-md-0">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link pr-0"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <div class="media align-items-center">
+              <span class="initials avatar avatar-sm rounded-circle"></span>
+              <div class="media-body ml-2 d-none d-lg-block">
+                <span
+                  class="user-username mb-0 text-sm font-weight-bold text-white"
+                ></span>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-header noti-title">
+              <h6 class="text-overflow m-0">Welcome!</h6>
+            </div>
+            <a href="profile.html" class="dropdown-item">
+              <i class="fa fa-user"></i>
+              <span>My profile</span>
+            </a>
+            <a href="/account" class="dropdown-item">
+              <i class="fa fa-cog"></i>
+              <span>Dashboard</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout-btn">
+              <i class="fa fa-sign-out"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

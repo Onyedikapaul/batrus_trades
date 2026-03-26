@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>BatrusTrades</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg:        #f5f0e8;
+        --bg2:       #ede8de;
+        --ink:       #1a1409;
+        --ink2:      #3d3425;
+        --muted:     #8a7d68;
+        --gold:      #b8860b;
+        --gold2:     #d4a017;
+        --gold-lt:   #f5e6c0;
+        --white:     #fdfaf4;
+        --border:    rgba(184,134,11,0.25);
+        --border2:   rgba(26,20,9,0.12);
+        --radius:    4px;
+        --fw:        1200px;
+      }
+
+      html { scroll-behavior: smooth; }
+      body { background: var(--bg); color: var(--ink); font-family: 'Outfit', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+      /* ── UTILITIES ── */
+      .wrapper { max-width: var(--fw); margin: 0 auto; padding: 0 32px; }
+      .tag { display: inline-block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); padding: 4px 14px; border-radius: 50px; font-weight: 500; }
+      .section-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(38px, 5vw, 62px); font-weight: 300; color: var(--ink); line-height: 1.05; }
+      .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--white); font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; padding: 14px 32px; text-decoration: none; border: none; cursor: pointer; transition: background .25s, transform .2s; }
+      .btn-primary:hover { background: var(--ink); transform: translateY(-2px); }
+      .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--ink); font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; padding: 12px 28px; border: 1px solid var(--border2); text-decoration: none; cursor: pointer; transition: all .25s; }
+      .btn-outline:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+      /* ── NAVBAR ── */
+      nav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+        background: rgba(245,240,232,0.92); backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border2);
+        padding: 0 32px; height: 64px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); text-decoration: none; letter-spacing: -0.5px; }
+      .nav-logo span { color: var(--gold); }
+      .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+      .nav-links a { text-decoration: none; color: var(--ink2); font-size: 12.5px; font-weight: 400; letter-spacing: 0.5px; transition: color .2s; }
+      .nav-links a:hover { color: var(--gold); }
+      .nav-cta { display: flex; gap: 12px; }
+      .nav-login { font-size: 12.5px; font-weight: 500; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 1px; letter-spacing: 0.5px; transition: color .2s; }
+      .nav-login:hover { color: var(--gold); border-color: var(--gold); }
+      .nav-mob-btn { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+      .nav-mob-btn span { display: block; width: 24px; height: 1.5px; background: var(--ink); transition: all .3s; }
+
+      /* ── HERO ── */
+      #hero {
+        min-height: 100vh; padding-top: 64px;
+        display: grid; grid-template-columns: 1fr 1fr;
+        overflow: hidden; position: relative;
+      }
+      .hero-left {
+        display: flex; flex-direction: column; justify-content: center;
+        padding: 80px 64px 80px 32px; position: relative; z-index: 2;
+      }
+      .hero-eyebrow { margin-bottom: 24px; }
+      .hero-headline {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(52px, 6vw, 88px);
+        font-weight: 300; line-height: 1;
+        color: var(--ink); margin-bottom: 8px;
+      }
+      .hero-headline em { font-style: italic; color: var(--gold); }
+      .hero-sub {
+        font-size: 15px; font-weight: 300; color: var(--muted);
+        line-height: 1.8; max-width: 420px; margin: 24px 0 40px;
+      }
+      .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+      .hero-stat-strip {
+        display: flex; gap: 0; margin-top: 64px;
+        border-top: 1px solid var(--border2);
+        border-left: 1px solid var(--border2);
+      }
+      .hero-stat {
+        padding: 20px 28px; border-right: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+        flex: 1;
+      }
+      .hero-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--ink); }
+      .hero-stat-lbl { font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+      .hero-right { position: relative; overflow: hidden; }
+      .hero-img-wrap { position: absolute; inset: 0; }
+      .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+      .hero-img-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, var(--bg) 0%, rgba(245,240,232,0) 40%),
+                    linear-gradient(0deg, var(--bg) 0%, transparent 30%);
+      }
+      .hero-ticker {
+        position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+        background: rgba(26,20,9,0.85); backdrop-filter: blur(8px);
+        border: 1px solid rgba(184,134,11,0.3);
+        padding: 10px 24px; display: flex; gap: 32px; white-space: nowrap;
+        border-radius: 2px; z-index: 10;
+      }
+      .ticker-item { font-size: 12px; font-weight: 400; color: rgba(253,250,244,0.7); display: flex; gap: 8px; align-items: center; }
+      .ticker-item .up { color: #4caf7d; font-weight: 600; }
+      .ticker-item .dn { color: #e05c5c; font-weight: 600; }
+
+      /* ── PLANS ── */
+      #plans { padding: 120px 0; background: var(--bg); }
+      .plans-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; gap: 24px; flex-wrap: wrap; }
+      .plans-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--border2); }
+      .plan-card {
+        padding: 40px 28px; border-right: 1px solid var(--border2);
+        position: relative; transition: background .3s;
+        display: flex; flex-direction: column; gap: 0;
+      }
+      .plan-card:last-child { border-right: none; }
+      .plan-card:hover { background: var(--ink); }
+      .plan-card:hover .plan-name, .plan-card:hover .plan-rate, .plan-card:hover .plan-dur,
+      .plan-card:hover .plan-feat li, .plan-card:hover .plan-range { color: var(--white); }
+      .plan-card:hover .plan-feat li::before { background: var(--gold2); }
+      .plan-card:hover .btn-outline { color: var(--white); border-color: rgba(255,255,255,0.3); }
+      .plan-card:hover .btn-outline:hover { background: var(--gold); border-color: var(--gold); color: var(--white); }
+      .plan-featured { background: var(--ink); }
+      .plan-featured .plan-name, .plan-featured .plan-rate, .plan-featured .plan-dur,
+      .plan-featured .plan-feat li, .plan-featured .plan-range { color: var(--white); }
+      .plan-featured .plan-feat li::before { background: var(--gold2) !important; }
+      .plan-featured .btn-outline { color: var(--white); border-color: rgba(255,255,255,0.3); }
+      .plan-badge { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold2); font-weight: 600; margin-bottom: 20px; display: block; min-height: 16px; }
+      .plan-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
+      .plan-rate { font-family: 'Cormorant Garamond', serif; font-size: 54px; font-weight: 300; color: var(--gold); line-height: 1; }
+      .plan-rate sup { font-size: 20px; vertical-align: super; }
+      .plan-dur { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 4px; margin-bottom: 24px; }
+      .plan-range { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 20px; padding: 10px 0; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
+      .plan-feat { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+      .plan-feat li { font-size: 12.5px; color: var(--ink2); padding-left: 16px; position: relative; }
+      .plan-feat li::before { content: ''; position: absolute; left: 0; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+
+      /* ── ABOUT ── */
+      #about { padding: 0; overflow: hidden; }
+      .about-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 620px; }
+      .about-img { position: relative; overflow: hidden; }
+      .about-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .about-img-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, transparent 60%, var(--bg) 100%); }
+      .about-content { padding: 80px 64px; display: flex; flex-direction: column; justify-content: center; background: var(--bg); }
+      .about-content .tag { margin-bottom: 20px; }
+      .about-content .section-label { margin-bottom: 24px; }
+      .about-body { font-size: 15px; line-height: 1.9; color: var(--muted); font-weight: 300; margin-bottom: 40px; }
+      .about-body strong { color: var(--ink); font-weight: 500; }
+      .about-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border2); margin-bottom: 40px; }
+      .about-metric { padding: 20px 24px; border-right: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
+      .about-metric:nth-child(2) { border-right: none; }
+      .about-metric:nth-child(3) { border-bottom: none; }
+      .about-metric:nth-child(4) { border-right: none; border-bottom: none; }
+      .about-metric-val { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--gold); }
+      .about-metric-lbl { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+      /* ── ADVANTAGES ── */
+      #advantages { padding: 120px 0; background: var(--ink); }
+      .adv-head { margin-bottom: 60px; }
+      .adv-head .tag { border-color: rgba(184,134,11,0.5); color: var(--gold2); }
+      .adv-head .section-label { color: var(--white); }
+      .adv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid rgba(255,255,255,0.08); }
+      .adv-card {
+        padding: 48px 32px; border-right: 1px solid rgba(255,255,255,0.08);
+        transition: background .3s;
+      }
+      .adv-card:last-child { border-right: none; }
+      .adv-card:hover { background: rgba(184,134,11,0.07); }
+      .adv-icon-wrap { width: 48px; height: 48px; border: 1px solid rgba(184,134,11,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+      .adv-icon-wrap svg { width: 22px; height: 22px; stroke: var(--gold2); }
+      .adv-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--white); margin-bottom: 12px; }
+      .adv-card p { font-size: 13.5px; color: rgba(253,250,244,0.45); line-height: 1.8; font-weight: 300; }
+
+      /* ── SPLIT BANNER ── */
+      #banner {
+        display: grid; grid-template-columns: 1fr 1fr; min-height: 500px;
+      }
+      .banner-img { position: relative; overflow: hidden; }
+      .banner-img img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(30%); }
+      .banner-img-overlay { position: absolute; inset: 0; background: rgba(26,20,9,0.5); }
+      .banner-content {
+        background: var(--gold); padding: 80px 64px;
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .banner-content .section-label { color: var(--ink); margin-bottom: 20px; }
+      .banner-content p { font-size: 15px; color: rgba(26,20,9,0.75); line-height: 1.8; margin-bottom: 40px; }
+      .banner-content .btn-primary { background: var(--ink); }
+      .banner-content .btn-primary:hover { background: var(--white); color: var(--ink); }
+
+      /* ── FAQ ── */
+      #faq { padding: 120px 0; background: var(--bg2); }
+      .faq-head { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-bottom: 64px; }
+      .faq-intro p { font-size: 15px; color: var(--muted); line-height: 1.8; }
+      .faq-list { display: flex; flex-direction: column; border: 1px solid var(--border2); }
+      .faq-item2 { border-bottom: 1px solid var(--border2); }
+      .faq-item2:last-child { border-bottom: none; }
+      .faq-q {
+        width: 100%; background: none; border: none; text-align: left; cursor: pointer;
+        padding: 22px 28px; display: flex; align-items: center; justify-content: space-between;
+        gap: 16px; font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 500;
+        color: var(--ink); transition: background .2s;
+      }
+      .faq-q:hover { background: var(--bg); }
+      .faq-q[aria-expanded="true"] { background: var(--gold-lt); }
+      .faq-q svg { flex-shrink: 0; stroke: var(--gold); transition: transform .3s; }
+      .faq-q[aria-expanded="true"] svg { transform: rotate(180deg); }
+      .faq-ans { display: none; padding: 0 28px 22px; font-size: 14px; color: var(--muted); line-height: 1.9; }
+      .faq-ans.open { display: block; }
+
+      /* ── REGISTRATION ── */
+      #company { padding: 120px 0; background: var(--bg); }
+      .reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border2); overflow: hidden; }
+      .reg-left { padding: 64px; background: var(--bg); }
+      .reg-left .tag { margin-bottom: 20px; }
+      .reg-left .section-label { margin-bottom: 20px; }
+      .reg-left p { font-size: 14.5px; color: var(--muted); line-height: 1.8; margin-bottom: 12px; }
+      .reg-left .reg-num { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gold); font-weight: 600; margin: 24px 0 32px; }
+      .reg-right { position: relative; overflow: hidden; min-height: 400px; }
+      .reg-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .reg-addr {
+        position: absolute; bottom: 32px; left: 32px; right: 32px;
+        background: rgba(245,240,232,0.93); backdrop-filter: blur(8px);
+        padding: 20px 24px; border-left: 3px solid var(--gold);
+      }
+      .reg-addr p { font-size: 13px; color: var(--ink2); margin: 0; }
+
+      /* ── CONTACT ── */
+      #contact { padding: 120px 0; background: var(--ink); }
+      .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; }
+      .contact-info .tag { border-color: rgba(184,134,11,0.5); color: var(--gold2); margin-bottom: 20px; }
+      .contact-info .section-label { color: var(--white); margin-bottom: 20px; }
+      .contact-info p { font-size: 14.5px; color: rgba(253,250,244,0.45); line-height: 1.8; margin-bottom: 40px; }
+      .contact-detail { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 24px; }
+      .contact-detail svg { stroke: var(--gold2); flex-shrink: 0; margin-top: 2px; }
+      .contact-detail span { font-size: 13.5px; color: rgba(253,250,244,0.6); line-height: 1.6; }
+      .contact-form-wrap { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 48px; }
+      .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+      .fg { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+      .fg label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(253,250,244,0.4); }
+      .fg input, .fg textarea, .fg select {
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+        color: var(--white); font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 300;
+        padding: 12px 16px; outline: none; transition: border-color .2s;
+        border-radius: 0; appearance: none;
+      }
+      .fg input:focus, .fg textarea:focus { border-color: rgba(184,134,11,0.5); }
+      .fg textarea { resize: vertical; min-height: 120px; }
+      .form-submit { width: 100%; margin-top: 8px; font-size: 13px; letter-spacing: 1.5px; border-radius: 0; }
+      .form-success2 { display: none; margin-top: 12px; font-size: 13px; color: #4caf7d; text-align: center; }
+
+      /* ── FOOTER ── */
+      footer { background: #0f0b04; border-top: 1px solid rgba(184,134,11,0.15); padding: 64px 0 32px; }
+      .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+      .footer-brand p { font-size: 13px; color: rgba(253,250,244,0.3); line-height: 1.7; margin-top: 12px; max-width: 220px; }
+      .footer-logo-txt { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--white); text-decoration: none; }
+      .footer-logo-txt span { color: var(--gold2); }
+      .footer-col h5 { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(253,250,244,0.25); margin-bottom: 20px; }
+      .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+      .footer-col ul a { font-size: 13.5px; color: rgba(253,250,244,0.5); text-decoration: none; transition: color .2s; }
+      .footer-col ul a:hover { color: var(--gold2); }
+      .footer-refbox { background: rgba(184,134,11,0.08); border: 1px solid rgba(184,134,11,0.2); padding: 20px; }
+      .footer-refbox p { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+      .footer-refbox .ref-rate { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold2); font-weight: 600; line-height: 1; }
+      .footer-refbox .ref-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+      .footer-refbox a { margin-top: 16px; display: inline-block; font-size: 12px; color: var(--gold2); text-decoration: none; border-bottom: 1px solid var(--gold); }
+      .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 12px; }
+      .footer-bottom small { font-size: 12px; color: rgba(253,250,244,0.2); }
+
+      /* ── GATE ── */
+      #bt-gate { display: none; position: fixed; inset: 0; z-index: 999999; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; }
+      .bt-gate-bg { position: absolute; inset: 0; background: var(--bg); }
+      .bt-gate-bg::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(184,134,11,0.06) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,134,11,0.06) 40px); }
+      .bt-gate-card { position: relative; z-index: 1; background: var(--white); border: 1px solid var(--border2); padding: 48px; width: 100%; max-width: 440px; margin: 20px; box-shadow: 0 40px 80px rgba(26,20,9,0.15); animation: gateIn .5s cubic-bezier(.16,1,.3,1) both; }
+      @keyframes gateIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+      .bt-gate-card::before { content: ''; display: block; width: 40px; height: 3px; background: var(--gold); margin-bottom: 32px; }
+      .bt-gate-card h1 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+      .bt-gate-card .tagline { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+      .bt-gate-card p { font-size: 13.5px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+      .bt-gate-cf { display: flex; justify-content: center; margin-bottom: 20px; }
+      .bt-gate-footer { font-size: 11px; color: var(--muted); text-align: center; }
+      .bt-gate-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+      .bt-gate-pill { font-size: 11px; padding: 4px 12px; border: 1px solid var(--border2); color: var(--muted); border-radius: 2px; }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 1024px) {
+        #hero { grid-template-columns: 1fr; }
+        .hero-right { display: none; }
+        .hero-left { padding: 80px 32px; }
+        .plans-grid { grid-template-columns: repeat(3, 1fr); }
+        .plan-card:nth-child(4), .plan-card:nth-child(5) { border-top: 1px solid var(--border2); }
+        .about-grid { grid-template-columns: 1fr; }
+        .about-img { min-height: 400px; }
+        .adv-grid { grid-template-columns: repeat(2, 1fr); }
+        .adv-card:nth-child(2) { border-right: none; }
+        .adv-card:nth-child(3) { border-top: 1px solid rgba(255,255,255,0.08); }
+        #banner { grid-template-columns: 1fr; }
+        .banner-img { min-height: 300px; }
+        .faq-head { grid-template-columns: 1fr; gap: 24px; }
+        .reg-grid { grid-template-columns: 1fr; }
+        .reg-right { display: none; }
+        .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 700px) {
+        .wrapper { padding: 0 20px; }
+        .plans-grid { grid-template-columns: 1fr 1fr; }
+        .plan-card:nth-child(5) { grid-column: span 2; border-right: none; }
+        .adv-grid { grid-template-columns: 1fr; }
+        .adv-card { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .form-row2 { grid-template-columns: 1fr; }
+        .footer-grid { grid-template-columns: 1fr; }
+        .nav-links { display: none; }
+        .nav-mob-btn { display: flex; }
+        .nav-mob-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0; background: var(--white); z-index: 800; flex-direction: column; padding: 32px; gap: 24px; overflow-y: auto; }
+        .nav-mob-menu.open { display: flex; }
+        .nav-mob-menu a { font-size: 18px; color: var(--ink); text-decoration: none; font-family: 'Cormorant Garamond', serif; font-weight: 400; padding: 8px 0; border-bottom: 1px solid var(--border2); }
+        .contact-form-wrap { padding: 28px 20px; }
+        .hero-stat-strip { flex-wrap: wrap; }
+        .hero-stat { flex: 1 0 40%; }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- ── NAVBAR ── -->
+    <nav>
+      <a href="/" class="nav-logo">Batrus<span>Trades</span></a>
+      <ul class="nav-links">
+        <li><a href="#plans">Plans</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#advantages">Advantages</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#company">Registration</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-cta nav-links">
+        <a href="/auth/login.html" class="nav-login">Sign In</a>
+        <a href="/auth/signup.html" class="btn-primary" style="padding:10px 22px;font-size:12px;">Open Account</a>
+      </div>
+      <button class="nav-mob-btn" id="mobBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="nav-mob-menu" id="mobMenu">
+      <a href="#plans">Plans</a>
+      <a href="#about">About</a>
+      <a href="#advantages">Advantages</a>
+      <a href="#faq">FAQ</a>
+      <a href="#company">Registration</a>
+      <a href="#contact">Contact</a>
+      <a href="/auth/login.html">Sign In</a>
+      <a href="/auth/signup.html">Open Account →</a>
+    </div>
+
+    <!-- ── HERO ── -->
+    <section id="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow"><span class="tag">Est. Since 1998</span></div>
+        <h1 class="hero-headline">
+          Wealth<br/>Built on<br/><em>Precision</em>
+        </h1>
+        <p class="hero-sub">BatrusTrades combines institutional-grade trading intelligence with accessible crypto investment plans — built for those who take their financial future seriously.</p>
+        <div class="hero-actions">
+          <a href="/auth/signup.html" class="btn-primary">Start Investing <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a href="#plans" class="btn-outline">View Plans</a>
+        </div>
+        <div class="hero-stat-strip">
+          <div class="hero-stat">
+            <div class="hero-stat-val">$34M+</div>
+            <div class="hero-stat-lbl">Insurance Fund</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">64</div>
+            <div class="hero-stat-lbl">Countries</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">100K+</div>
+            <div class="hero-stat-lbl">Investors</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">24/7</div>
+            <div class="hero-stat-lbl">Support</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-img-wrap">
+          <img src="/assets/images/hero.avif" alt="Trading platform" loading="eager" />
+          <div class="hero-img-overlay"></div>
+        </div>
+        <div class="hero-ticker">
+          <div class="ticker-item">BTC <span class="up">+2.4%</span></div>
+          <div class="ticker-item">ETH <span class="up">+1.8%</span></div>
+          <div class="ticker-item">LTC <span class="dn">-0.6%</span></div>
+          <div class="ticker-item">USDT <span class="up">+0.02%</span></div>
+          <div class="ticker-item">BCH <span class="up">+3.1%</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PLANS ── -->
+    <section id="plans">
+      <div class="wrapper">
+        <div class="plans-head">
+          <div>
+            <span class="tag" style="margin-bottom:16px;display:inline-block;">Investment Plans</span>
+            <h2 class="section-label">Choose Your<br/>Investment Tier</h2>
+          </div>
+          <p style="max-width:320px;font-size:14px;color:var(--muted);line-height:1.8;">Each plan returns principal at cycle end. All profits are paid instantly — no delays, no hidden fees.</p>
+        </div>
+        <div class="plans-grid">
+
+          <div class="plan-card">
+            <span class="plan-badge">&nbsp;</span>
+            <div class="plan-name">Standard</div>
+            <div class="plan-rate"><sup>%</sup>5</div>
+            <div class="plan-dur">After 24 Hours</div>
+            <div class="plan-range">$50 – $499</div>
+            <ul class="plan-feat">
+              <li>24 Hour Duration</li>
+              <li>Instant Payment</li>
+              <li>Principal Returned</li>
+            </ul>
+            <a href="/auth/login.html" class="btn-outline" style="font-size:11px;">Select Plan</a>
+          </div>
+
+          <div class="plan-card">
+            <span class="plan-badge">&nbsp;</span>
+            <div class="plan-name">Magnate</div>
+            <div class="plan-rate"><sup>%</sup>8</div>
+            <div class="plan-dur">After 24 Hours</div>
+            <div class="plan-range">$500 – $999</div>
+            <ul class="plan-feat">
+              <li>24 Hour Duration</li>
+              <li>Instant Payment</li>
+              <li>Principal Returned</li>
+            </ul>
+            <a href="/auth/login.html" class="btn-outline" style="font-size:11px;">Select Plan</a>
+          </div>
+
+          <div class="plan-card plan-featured">
+            <span class="plan-badge">Most Popular</span>
+            <div class="plan-name">Platinum</div>
+            <div class="plan-rate"><sup>%</sup>12</div>
+            <div class="plan-dur">After 36 Hours</div>
+            <div class="plan-range">$1,000 – $4,999</div>
+            <ul class="plan-feat">
+              <li>36 Hour Duration</li>
+              <li>Instant Payment</li>
+              <li>Principal Returned</li>
+            </ul>
+            <a href="/auth/login.html" class="btn-primary" style="font-size:11px;padding:12px 24px;">Select Plan</a>
+          </div>
+
+          <div class="plan-card">
+            <span class="plan-badge">&nbsp;</span>
+            <div class="plan-name">Executive</div>
+            <div class="plan-rate"><sup>%</sup>15</div>
+            <div class="plan-dur">After 48 Hours</div>
+            <div class="plan-range">$5,000 – $9,999</div>
+            <ul class="plan-feat">
+              <li>48 Hour Duration</li>
+              <li>Instant Payment</li>
+              <li>Principal Returned</li>
+            </ul>
+            <a href="/auth/login.html" class="btn-outline" style="font-size:11px;">Select Plan</a>
+          </div>
+
+          <div class="plan-card">
+            <span class="plan-badge">Elite</span>
+            <div class="plan-name">Premium</div>
+            <div class="plan-rate"><sup>%</sup>22</div>
+            <div class="plan-dur">After 72 Hours</div>
+            <div class="plan-range">$10,000 – No Limit</div>
+            <ul class="plan-feat">
+              <li>72 Hour Duration</li>
+              <li>Instant Payment</li>
+              <li>Principal Returned</li>
+            </ul>
+            <a href="/auth/login.html" class="btn-outline" style="font-size:11px;">Select Plan</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ABOUT ── -->
+    <section id="about">
+      <div class="about-grid">
+        <div class="about-img">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80&auto=format&fit=crop" alt="Data analytics" loading="lazy" />
+          <div class="about-img-overlay"></div>
+        </div>
+        <div class="about-content">
+          <span class="tag">About BatrusTrades</span>
+          <h2 class="section-label">Trading Intelligence,<br/>Refined.</h2>
+          <p class="about-body">
+            <strong>BatrusTrades</strong> was built on a single conviction — that sophisticated financial tools should not be reserved for institutional players. Our proprietary neural trading architecture learns, adapts, and executes with a precision that consistently outpaces the market.<br/><br/>
+            <strong>Error-free. Efficient.</strong> Our cluster-based trading models operate across global markets, adapting in real time to protect and grow your capital.
+          </p>
+          <div class="about-metrics">
+            <div class="about-metric">
+              <div class="about-metric-val">$34M+</div>
+              <div class="about-metric-lbl">Insurance Reserve</div>
+            </div>
+            <div class="about-metric">
+              <div class="about-metric-val">26yrs</div>
+              <div class="about-metric-lbl">In the Market</div>
+            </div>
+            <div class="about-metric">
+              <div class="about-metric-val">64</div>
+              <div class="about-metric-lbl">Countries Served</div>
+            </div>
+            <div class="about-metric">
+              <div class="about-metric-val">100K+</div>
+              <div class="about-metric-lbl">Active Investors</div>
+            </div>
+          </div>
+          <a href="#company" class="btn-primary">Our Registration →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ADVANTAGES ── -->
+    <section id="advantages">
+      <div class="wrapper">
+        <div class="adv-head">
+          <span class="tag">Why BatrusTrades</span>
+          <h2 class="section-label" style="color:var(--white);margin-top:16px;">Built on a Foundation<br/>of Trust</h2>
+        </div>
+        <div class="adv-grid">
+          <div class="adv-card">
+            <div class="adv-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s-7 2.5-7 7.5c0 4.5 3 7 7 8.5 4-1.5 7-4 7-8.5 0-5-7-7.5-7-7.5z"/><path d="M9 12l2 2 4-4.5"/></svg>
+            </div>
+            <h4>Insurance Fund</h4>
+            <p>A $34M+ reserve guarantees the safety of your principal. High-tech protocols backed by international experience protect every active investment.</p>
+          </div>
+          <div class="adv-card">
+            <div class="adv-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </div>
+            <h4>Time-Tested Reliability</h4>
+            <p>Since 1998, hundreds of thousands of investors worldwide have achieved consistent returns through BatrusTrades' proven trading infrastructure.</p>
+          </div>
+          <div class="adv-card">
+            <div class="adv-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <h4>Seasoned Team</h4>
+            <p>Our analysts, risk managers, and trading engineers operate at the intersection of cutting-edge AI and deep financial market expertise.</p>
+          </div>
+          <div class="adv-card" style="border-right:none;">
+            <div class="adv-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18c0 2.5-1 4-3 4"/><path d="M3 10c0-4.4 3.6-8 8-8s8 3.6 8 8v2c0 4.4-3.6 8-8 8"/><rect x="11" y="14" width="4" height="7" rx="2"/><rect x="9" y="14" width="4" height="7" rx="2"/></svg>
+            </div>
+            <h4>24/7 Live Support</h4>
+            <p>Our dedicated support team is available around the clock. Every client receives individual attention — response time under 1 hour, always.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SPLIT BANNER ── -->
+    <section id="banner">
+      <div class="banner-img">
+        <img src="https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=900&q=80&auto=format&fit=crop" alt="Crypto trading" loading="lazy" />
+        <div class="banner-img-overlay"></div>
+      </div>
+      <div class="banner-content">
+        <span class="tag" style="border-color:rgba(26,20,9,0.25);color:var(--ink2);margin-bottom:20px;display:inline-block;">Referral Program</span>
+        <h2 class="section-label">Earn While Others Invest</h2>
+        <p>Refer a friend to BatrusTrades and earn 10% commission on every deposit they make — credited instantly, withdrawable at any time. No limits, no expiry.</p>
+        <a href="/auth/signup.html" class="btn-primary">Join & Earn →</a>
+      </div>
+    </section>
+
+    <!-- ── FAQ ── -->
+    <section id="faq">
+      <div class="wrapper">
+        <div class="faq-head">
+          <div>
+            <span class="tag" style="margin-bottom:16px;display:inline-block;">FAQ</span>
+            <h2 class="section-label">Frequently Asked<br/>Questions</h2>
+          </div>
+          <div class="faq-intro">
+            <p>Everything you need to know before you start investing with BatrusTrades. Can't find your answer? Reach out to our support team anytime.</p>
+          </div>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>How do I start investing?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">Register an account, verify your email, deposit using one of our supported cryptocurrencies, then choose a plan matching your budget. Returns and principal are credited automatically when the plan cycle ends.</div>
+          </div>
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>What cryptocurrencies are accepted?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">We accept BTC, ETH, LTC, BCH, Dash, Dogecoin, and USDT. Deposits are confirmed after the required network confirmations for each coin.</div>
+          </div>
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>When are profits paid out?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">Profits are paid instantly after the plan cycle ends. Standard and Magnate: 24h. Platinum: 36h. Executive: 48h. Premium: 72h. Principal is returned in full at the end of every cycle.</div>
+          </div>
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>Is there a referral program?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">Yes — earn 10% commission on every deposit made by users you refer. Commissions are credited instantly and can be withdrawn or reinvested at any time, with no cap.</div>
+          </div>
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>How do I withdraw my funds?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">Log into your dashboard, navigate to Withdraw, enter your wallet address and amount. Most withdrawals process instantly. Minimum amounts apply per coin and are shown at withdrawal.</div>
+          </div>
+          <div class="faq-item2">
+            <button class="faq-q" aria-expanded="false">
+              <span>Is my investment insured?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-ans">We maintain an insurance reserve of over $34 million held specifically to protect investor capital. This fund covers any unforeseen circumstances and guarantees principal return for all active plans.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── REGISTRATION ── -->
+    <section id="company">
+      <div class="wrapper">
+        <div class="reg-grid">
+          <div class="reg-left">
+            <span class="tag">Official Registration</span>
+            <h2 class="section-label" style="margin-top:16px;">Regulated &<br/>Transparent</h2>
+            <p>BatrusTrades is a formally registered financial trading entity. Hundreds of thousands of investors from across the globe have trusted our platform for stable, consistent returns since 1998.</p>
+            <p>We operate under full regulatory compliance, maintaining complete transparency with our client base.</p>
+            <div class="reg-num">Registration No. #03607580</div>
+            <a href="/auth/signup.html" class="btn-primary">Create Account →</a>
+          </div>
+          <div class="reg-right">
+            <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80&auto=format&fit=crop" alt="Amsterdam headquarters" loading="lazy" />
+            <div class="reg-addr">
+              <p>Weteringstraat 34-1, 1017 SP Amsterdam, Netherlands</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact">
+      <div class="wrapper">
+        <div class="contact-grid">
+          <div class="contact-info">
+            <span class="tag">Get In Touch</span>
+            <h2 class="section-label" style="margin-top:16px;">We're Always<br/>Available</h2>
+            <p>Have a question or need guidance on your investment journey? Our team is here around the clock.</p>
+            <div class="contact-detail">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Weteringstraat 34-1, 1017 SP Amsterdam, Netherlands</span>
+            </div>
+            <div class="contact-detail">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>support@batrustrades.com</span>
+            </div>
+            <div class="contact-detail">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>24/7 Support — response within 1 hour</span>
+            </div>
+          </div>
+          <div class="contact-form-wrap">
+            <form id="contactForm" method="post" action="/api/contact">
+              <div class="form-row2">
+                <div class="fg"><label>First Name</label><input type="text" name="firstName" placeholder="John" required /></div>
+                <div class="fg"><label>Last Name</label><input type="text" name="lastName" placeholder="Doe" /></div>
+              </div>
+              <div class="form-row2">
+                <div class="fg"><label>Email Address</label><input type="email" name="email" placeholder="you@email.com" required /></div>
+                <div class="fg"><label>Subject</label><input type="text" name="subject" placeholder="Your subject" /></div>
+              </div>
+              <div class="fg"><label>Message</label><textarea name="message" rows="5" placeholder="Write your message..." required></textarea></div>
+              <button type="submit" class="btn-primary form-submit">
+                Send Message
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+              <p class="form-success2" id="formSuccess">✓ Message sent! We'll be in touch shortly.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="wrapper">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="footer-logo-txt">Batrus<span>Trades</span></a>
+            <p>The most trusted investment platform since 1998. Secure, regulated, and built for lasting wealth.</p>
+          </div>
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="#plans">Investment Plans</a></li>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#advantages">Advantages</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Account</h5>
+            <ul>
+              <li><a href="/auth/login.html">Sign In</a></li>
+              <li><a href="/auth/signup.html">Open Account</a></li>
+              <li><a href="#company">Registration</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Referral</h5>
+            <div class="footer-refbox">
+              <p>Earn up to</p>
+              <div class="ref-rate">10%</div>
+              <div class="ref-sub">per referral deposit</div>
+              <a href="/auth/signup.html">Join program →</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <small>© BatrusTrades 2025. All Rights Reserved.</small>
+          <small>Registered: #03607580 · Amsterdam, Netherlands</small>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ── GATE ── -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet" />
+
+    <div id="bt-gate" style="display:none;">
+      <div class="bt-gate-bg"></div>
+      <div class="bt-gate-card">
+        <h1>BatrusTrades</h1>
+        <div class="tagline">Invest · Grow · Thrive</div>
+        <div class="bt-gate-pills">
+          <div class="bt-gate-pill">🔒 SSL Secured</div>
+          <div class="bt-gate-pill">⚡ Live Trading</div>
+          <div class="bt-gate-pill">🌍 Global Access</div>
+        </div>
+        <p>Please complete the verification below to confirm you're a real person. This protects our community from bots and fraud.</p>
+        <div class="bt-gate-cf">
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAACwYj1gSjEOmHEXz" data-callback="onGatePassed" data-theme="light"></div>
+        </div>
+        <p class="bt-gate-footer">🛡️ Protected by Cloudflare Turnstile · batrus-trades.pro</p>
+      </div>
+    </div>
+
+    <script>
+      // Gate
+      (function(){
+        if(!localStorage.getItem('bt_verified')){
+          var g = document.getElementById('bt-gate');
+          g.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        }
+      })();
+      function onGatePassed(token){
+        localStorage.setItem('bt_verified','1');
+        var g = document.getElementById('bt-gate');
+        g.style.transition = 'opacity 0.5s';
+        g.style.opacity = '0';
+        setTimeout(function(){ g.style.display='none'; document.body.style.overflow=''; }, 500);
+      }
+
+      // Mobile nav
+      var btn = document.getElementById('mobBtn');
+      var menu = document.getElementById('mobMenu');
+      btn.addEventListener('click', function(){
+        menu.classList.toggle('open');
+      });
+      menu.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){ menu.classList.remove('open'); });
+      });
+
+      // FAQ
+      document.querySelectorAll('.faq-q').forEach(function(q){
+        q.addEventListener('click', function(){
+          var isOpen = q.getAttribute('aria-expanded') === 'true';
+          document.querySelectorAll('.faq-q').forEach(function(x){
+            x.setAttribute('aria-expanded','false');
+            x.nextElementSibling.classList.remove('open');
+          });
+          if(!isOpen){
+            q.setAttribute('aria-expanded','true');
+            q.nextElementSibling.classList.add('open');
+          }
+        });
+      });
+
+      // Contact form
+      var form = document.getElementById('contactForm');
+      if(form){
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          document.getElementById('formSuccess').style.display = 'block';
+          form.reset();
+        });
+      }
+    </script>
+
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+
+  </body>
+</html>

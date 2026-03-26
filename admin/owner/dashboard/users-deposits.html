@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Users Deposits</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+      .page-header h1 { margin: 0; }
+      .muted { color: #6b7280; font-size: 0.875rem; margin: 4px 0 0; }
+      .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+      .card-head { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; flex-wrap: wrap; gap: 0.75rem; }
+      .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+      .filters select, .filters input { padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.82rem; background: #fff; color: #374151; outline: none; }
+      .filters select:focus, .filters input:focus { border-color: #6366f1; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+      th { padding: 0.75rem 1rem; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+      td { padding: 0.85rem 1rem; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
+      tr:last-child td { border-bottom: none; }
+      tr:hover td { background: #fafafa; }
+
+      .badge { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+      .badge-pending   { background: #fef3c7; color: #92400e; }
+      .badge-confirmed { background: #d1fae5; color: #065f46; }
+      .badge-approved  { background: #d1fae5; color: #065f46; }
+      .badge-rejected  { background: #fee2e2; color: #991b1b; }
+      .badge-cancelled { background: #f3f4f6; color: #374151; }
+
+      .btn { padding: 0.35rem 0.8rem; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; white-space: nowrap; }
+      .btn-confirm { background: #d1fae5; color: #065f46; } .btn-confirm:hover { background: #a7f3d0; }
+      .btn-reject  { background: #fee2e2; color: #991b1b; } .btn-reject:hover  { background: #fecaca; }
+      .btn-pending { background: #fef3c7; color: #92400e; } .btn-pending:hover { background: #fde68a; }
+      .btn-delete  { background: #fef2f2; color: #7f1d1d; border: 1px solid #fca5a5; } .btn-delete:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+      .btn-ghost   { background: transparent; color: #6b7280; border: 1px solid #e5e7eb; } .btn-ghost:hover { background: #f9fafb; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+      .user-link { display: inline-flex; align-items: center; gap: 0.4rem; color: #1d4ed8; font-size: 0.82rem; font-weight: 500; text-decoration: none; }
+      .user-link:hover { text-decoration: underline; }
+      .empty { text-align: center; padding: 3rem; color: #9ca3af; }
+
+      /* Toast */
+      .toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+      .toast { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.2rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; min-width: 280px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); animation: slideIn 0.3s ease; }
+      .toast.success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+      .toast.error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+      .toast.warning { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+      @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+      /* Reject dialog */
+      .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9998; display: flex; align-items: center; justify-content: center; }
+      .dialog { background: #fff; border-radius: 10px; padding: 1.75rem; max-width: 420px; width: 90%; }
+      .dialog h3 { margin: 0 0 0.5rem; }
+      .dialog p  { color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem; }
+      .dialog input { width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #e5e7eb; border-radius: 6px; font-size: 0.9rem; outline: none; margin-bottom: 1rem; box-sizing: border-box; }
+      .dialog input:focus { border-color: #ef4444; }
+      .dialog-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+      /* ── Delete warning modal ── */
+      #depDeleteModal {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(3px);
+      }
+      #depDeleteModal.ddm-open { display: flex !important; }
+      .ddm-dialog {
+        background: #fff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 430px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+        animation: ddmIn 0.2s ease;
+      }
+      @keyframes ddmIn { from { opacity:0; transform:scale(0.95) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+      .ddm-head { background: #fff1f2; border-bottom: 1px solid #fecdd3; padding: 18px 22px 14px; display: flex; align-items: flex-start; justify-content: space-between; }
+      .ddm-head-left { display: flex; align-items: flex-start; gap: 12px; }
+      .ddm-icon  { width: 38px; height: 38px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+      .ddm-title { font-size: 15px; font-weight: 700; color: #991b1b; margin: 0; }
+      .ddm-sub   { font-size: 12px; color: #ef4444; margin: 3px 0 0; }
+      .ddm-x { background: rgba(239,68,68,0.1); border: none; border-radius: 8px; color: #ef4444; width: 30px; height: 30px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .ddm-x:hover { background: rgba(239,68,68,0.2); }
+      .ddm-body { padding: 20px 22px 22px; }
+      .ddm-warning { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 13px 15px; font-size: 13px; color: #92400e; line-height: 1.55; margin-bottom: 16px; }
+      .ddm-warning strong { color: #c2410c; }
+      .ddm-info { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+      .ddm-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; }
+      .ddm-row .dk { color: #94a3b8; font-weight: 500; }
+      .ddm-row .dv { color: #1e293b; font-weight: 600; }
+      .ddm-input-wrap { margin-bottom: 18px; }
+      .ddm-input-wrap label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+      .ddm-input-wrap input { width: 100%; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 14px; font-family: inherit; color: #111827; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+      .ddm-input-wrap input:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+      .ddm-input-wrap small { font-size: 11px; color: #94a3b8; margin-top: 4px; display: block; }
+      .ddm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .ddm-cancel  { padding: 11px; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; color: #374151; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+      .ddm-cancel:hover { background: #f3f4f6; }
+      .ddm-confirm { padding: 11px; border-radius: 10px; border: none; background: #ef4444; color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.2s; }
+      .ddm-confirm:hover { opacity: 0.88; }
+      .ddm-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+      .ddm-result { margin-top: 12px; }
+      .ddm-ok  { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+      .ddm-err { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+    <header id="topnav-mount"></header>
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top:50px">
+          <div class="page-header">
+            <div>
+              <h1>Users Deposits</h1>
+              <p class="muted">View and manage all deposit requests across all users.</p>
+            </div>
+            <span class="muted" id="countText" style="align-self:center"></span>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div class="filters">
+                <input type="text" id="searchInput" placeholder="Search user or method..." style="width:200px" />
+                <select id="statusFilter">
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="depositsTbody">
+                  <tr><td colspan="7" class="empty">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer id="footer-mount"></footer>
+
+    <!-- Delete Warning Modal -->
+    <div id="depDeleteModal" aria-hidden="true">
+      <div class="ddm-dialog">
+        <div class="ddm-head">
+          <div class="ddm-head-left">
+            <div class="ddm-icon">🗑️</div>
+            <div>
+              <div class="ddm-title">Delete Deposit</div>
+              <div class="ddm-sub">This action cannot be undone</div>
+            </div>
+          </div>
+          <button class="ddm-x" id="ddmCloseBtn">×</button>
+        </div>
+        <div class="ddm-body">
+          <div class="ddm-warning">
+            ⚠️ You are about to <strong>permanently delete</strong> this deposit record.
+            This will <strong>not</strong> automatically reverse the user's balance.
+            Make sure any balance adjustments have been handled separately before deleting.
+          </div>
+          <div class="ddm-info" id="ddmInfo"></div>
+          <div class="ddm-input-wrap">
+            <label>Type <strong>DELETE</strong> to confirm</label>
+            <input type="text" id="ddmConfirmInput" placeholder='Type "DELETE" here' autocomplete="off" />
+            <small>Case-sensitive.</small>
+          </div>
+          <div class="ddm-actions">
+            <button class="ddm-cancel"  id="ddmCancelBtn">Cancel</button>
+            <button class="ddm-confirm" id="ddmConfirmBtn" disabled>🗑️ Delete Permanently</button>
+          </div>
+          <div class="ddm-result" id="ddmResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      let allDeposits   = [];
+      let deletingDepId = null;
+
+      // ── toast ──
+      function showToast(type, message) {
+        const container = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌", warning: "⚠️" };
+        t.innerHTML = `<span>${icons[type]}</span><span>${message}</span>
+          <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;cursor:pointer;opacity:0.6;">✕</button>`;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      function esc(str) {
+        return String(str ?? "").replace(/[&<>"']/g, m =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m]
+        );
+      }
+
+      function statusBadge(s) {
+        return `<span class="badge badge-${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
+      }
+
+      function formatDate(d) { return d ? new Date(d).toLocaleString() : "—"; }
+
+      function actionButtons(d) {
+        const id = d._id;
+        const s  = d.status;
+        if (s === "cancelled") return "—";
+        const confirm  = `<button class="btn btn-confirm" onclick="confirmDeposit('${id}', this)">Confirm</button>`;
+        const reject   = `<button class="btn btn-reject"  onclick="openRejectModal('${id}')">Reject</button>`;
+        const pending  = `<button class="btn btn-pending" onclick="setPending('${id}', this)">Set Pending</button>`;
+        const del      = `<button class="btn btn-delete"  onclick="openDeleteModal('${id}','${esc(d.user?.name || "Unknown")}','${esc(d.user?.email || "")}',${d.amount},'${esc(d.paymentMethod || "—")}','${s}')">🗑 Delete</button>`;
+        if (s === "pending")   return `<div class="action-btns">${confirm}${reject}${del}</div>`;
+        if (s === "confirmed") return `<div class="action-btns">${reject}${pending}${del}</div>`;
+        if (s === "rejected")  return `<div class="action-btns">${confirm}${pending}${del}</div>`;
+        return `<div class="action-btns">${del}</div>`;
+      }
+
+      function renderTable(deposits) {
+        const tbody = document.getElementById("depositsTbody");
+        document.getElementById("countText").textContent = `${deposits.length} record(s)`;
+        if (!deposits.length) {
+          tbody.innerHTML = `<tr><td colspan="7" class="empty">No deposits found.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = deposits.map(d => {
+          const userId    = d.user?._id || d.user;
+          const userName  = d.user?.name  || "Unknown";
+          const userEmail = d.user?.email || "";
+          return `
+            <tr id="row-${d._id}">
+              <td style="white-space:nowrap;">${formatDate(d.createdAt)}</td>
+              <td>
+                <a class="user-link" href="/admin/owner/dashboard/user-deposits.html?userId=${userId}">
+                  👤 ${esc(userName)}<br>
+                  <span style="color:#9ca3af;font-size:0.75rem;">${esc(userEmail)}</span>
+                </a>
+              </td>
+              <td><strong>$${Number(d.amount).toLocaleString()}</strong></td>
+              <td>${esc(d.paymentMethod || "—")}</td>
+              <td>${statusBadge(d.status)}</td>
+              <td>${esc(d.note || "—")}</td>
+              <td>${actionButtons(d)}</td>
+            </tr>`;
+        }).join("");
+      }
+
+      function applyFilters() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const status = document.getElementById("statusFilter").value;
+        const filtered = allDeposits.filter(d => {
+          const userName  = (d.user?.name  || "").toLowerCase();
+          const userEmail = (d.user?.email || "").toLowerCase();
+          const method    = (d.paymentMethod || "").toLowerCase();
+          const matchSearch = !search || userName.includes(search) || userEmail.includes(search) || method.includes(search);
+          const matchStatus = !status || d.status === status;
+          return matchSearch && matchStatus;
+        });
+        renderTable(filtered);
+      }
+
+      async function loadDeposits() {
+        try {
+          const res = await fetch("/api/admin/deposits", { credentials: "include" });
+          const { success, deposits } = await res.json();
+          if (!success) throw new Error();
+          allDeposits = deposits;
+          applyFilters();
+        } catch {
+          document.getElementById("depositsTbody").innerHTML =
+            `<tr><td colspan="7" class="empty">Failed to load deposits.</td></tr>`;
+        }
+      }
+
+      async function confirmDeposit(depositId, btn) {
+        btn.disabled = true; btn.textContent = "Confirming...";
+        try {
+          const res = await fetch(`/api/admin/users/${depositId}/confirm`, { method: "PATCH", credentials: "include" });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Deposit confirmed!");
+          loadDeposits();
+        } catch (err) {
+          showToast("error", err.message || "Failed to confirm");
+          btn.disabled = false; btn.textContent = "Confirm";
+        }
+      }
+
+      async function setPending(depositId, btn) {
+        btn.disabled = true; btn.textContent = "Updating...";
+        try {
+          const res = await fetch(`/api/admin/deposits/${depositId}/pending`, { method: "PATCH", credentials: "include" });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Deposit set back to pending.");
+          loadDeposits();
+        } catch (err) {
+          showToast("error", err.message || "Failed to update");
+          btn.disabled = false; btn.textContent = "Set Pending";
+        }
+      }
+
+      let rejectTargetId = null;
+
+      function openRejectModal(depositId) {
+        rejectTargetId = depositId;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay";
+        overlay.id = "rejectOverlay";
+        overlay.innerHTML = `
+          <div class="dialog">
+            <h3>Reject Deposit</h3>
+            <p>Provide a reason — this will be stored on the record.</p>
+            <input type="text" id="rejectReasonInput" placeholder="Rejection reason..." />
+            <div class="dialog-actions">
+              <button class="btn btn-ghost" onclick="closeRejectModal()">Cancel</button>
+              <button class="btn btn-reject" id="rejectSubmitBtn" onclick="submitReject()">Reject</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+      }
+
+      function closeRejectModal() {
+        document.getElementById("rejectOverlay")?.remove();
+        rejectTargetId = null;
+      }
+
+      async function submitReject() {
+        const reason = document.getElementById("rejectReasonInput")?.value.trim();
+        if (!reason) { showToast("warning", "Please provide a reason."); return; }
+        const btn = document.getElementById("rejectSubmitBtn");
+        btn.disabled = true; btn.textContent = "Rejecting...";
+        try {
+          const res = await fetch(`/api/admin/users/${rejectTargetId}/reject`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ rejectionReason: reason }),
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+          showToast("success", "Deposit rejected.");
+          closeRejectModal();
+          loadDeposits();
+        } catch (err) {
+          showToast("error", err.message || "Failed to reject");
+          btn.disabled = false; btn.textContent = "Reject";
+        }
+      }
+
+      // ── delete modal ──
+      function openDeleteModal(id, name, email, amount, method, status) {
+        deletingDepId = id;
+
+        document.getElementById("ddmInfo").innerHTML = `
+          <div class="ddm-row"><span class="dk">User</span><span class="dv">${esc(name)}</span></div>
+          <div class="ddm-row"><span class="dk">Email</span><span class="dv">${esc(email)}</span></div>
+          <div class="ddm-row"><span class="dk">Amount</span><span class="dv">$${Number(amount).toLocaleString()}</span></div>
+          <div class="ddm-row"><span class="dk">Method</span><span class="dv">${esc(method)}</span></div>
+          <div class="ddm-row"><span class="dk">Status</span><span class="dv">${esc(status)}</span></div>
+        `;
+
+        document.getElementById("ddmConfirmInput").value = "";
+        document.getElementById("ddmConfirmBtn").disabled = true;
+        document.getElementById("ddmResult").innerHTML = "";
+
+        const modal = document.getElementById("depDeleteModal");
+        modal.classList.add("ddm-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => document.getElementById("ddmConfirmInput")?.focus(), 80);
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("depDeleteModal").classList.remove("ddm-open");
+        document.getElementById("depDeleteModal").setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        deletingDepId = null;
+      }
+
+      async function executeDelete() {
+        if (!deletingDepId) return;
+        if (document.getElementById("ddmConfirmInput")?.value !== "DELETE") return;
+
+        const btn      = document.getElementById("ddmConfirmBtn");
+        const resultEl = document.getElementById("ddmResult");
+        btn.disabled   = true;
+        btn.innerHTML  = "⏳ Deleting...";
+
+        try {
+          const res  = await fetch(`/api/admin/deposits/${deletingDepId}`, { method: "DELETE", credentials: "include" });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.success) throw new Error(data.message || "Delete failed");
+
+          resultEl.innerHTML = `<div class="ddm-ok">✅ Deposit deleted successfully.</div>`;
+          showToast("success", "Deposit deleted.");
+          setTimeout(() => { closeDeleteModal(); loadDeposits(); }, 1200);
+
+        } catch (err) {
+          resultEl.innerHTML = `<div class="ddm-err">❌ ${esc(err.message || "Delete failed.")}</div>`;
+          btn.disabled  = false;
+          btn.innerHTML = "🗑️ Delete Permanently";
+        }
+      }
+
+      // ── delete modal events ──
+      document.getElementById("ddmConfirmInput").addEventListener("input", e => {
+        document.getElementById("ddmConfirmBtn").disabled = e.target.value !== "DELETE";
+      });
+      document.getElementById("ddmCloseBtn").addEventListener("click",  closeDeleteModal);
+      document.getElementById("ddmCancelBtn").addEventListener("click", closeDeleteModal);
+      document.getElementById("ddmConfirmBtn").addEventListener("click", executeDelete);
+      document.getElementById("depDeleteModal").addEventListener("click", e => {
+        if (e.target === document.getElementById("depDeleteModal")) closeDeleteModal();
+      });
+      document.addEventListener("keydown", e => { if (e.key === "Escape") closeDeleteModal(); });
+
+      // ── existing events ──
+      document.getElementById("searchInput").addEventListener("input",  applyFilters);
+      document.getElementById("statusFilter").addEventListener("change", applyFilters);
+
+      loadDeposits();
+    </script>
+  </body>
+</html>

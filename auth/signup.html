@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="author" content="Softnio">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+
+  <!-- Fav Icon -->
+  <link rel="shortcut icon" href="/assets/images/logo.png">
+
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+
+  <!-- Signup CSS (same design as login) -->
+  <link rel="stylesheet" href="/assets/css/signup.css">
+
+  <!-- Site Title -->
+  <title>Signup - Batrus Trades</title>
+
+  <!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+
+</head>
+
+<body class="nk-body body-wider bg-light-alt">
+
+  <div class="nk-wrap">
+    <main class="nk-pages">
+      <div class="section">
+        <div class="container">
+          <div class="nk-blocks d-flex justify-content-center">
+
+            <div class="ath-container m-0">
+              <div class="ath-body">
+
+                <!-- Logo -->
+                <center>
+                  <a href="../" class="text-center mb-3">
+                    <img src="/assets/images/logo.png" style="height:50px" />
+                  </a>
+                </center>
+
+                <!-- Title -->
+                <h5 class="ath-heading title">Sign Up</h5>
+
+                <form action="" method="">
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="text" class="input-bordered" placeholder="Your Name" name="name" required>
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="text" class="input-bordered" placeholder="Your Username" name="username" required>
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="email" class="input-bordered" placeholder="Your Email" name="email" required>
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="password" class="input-bordered" placeholder="Password" name="password" required id="passwordInput">
+                    </div>
+                    <div class="show-password-wrap">
+                      <input type="checkbox" id="showPass1" onchange="togglePass('passwordInput', this)">
+                      <label for="showPass1">Show Password</label>
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="password" class="input-bordered" placeholder="Repeat Password" name="confirm-password" required id="passwordInput2">
+                    </div>
+                    <div class="show-password-wrap">
+                      <input type="checkbox" id="showPass2" onchange="togglePass('passwordInput2', this)">
+                      <label for="showPass2">Show Password</label>
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="text" class="input-bordered" placeholder="Referral Id (Optional)" name="ref" value="">
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <input class="input-checkbox" id="agree-term-2" type="checkbox" name="ac" value="v" required>
+                    <label for="agree-term-2">I agree to Batrus Trades <a href="/terms.html">Terms</a>.</label>
+                  </div>
+
+                  <!-- Cloudflare Turnstile -->
+                  <div class="cf-turnstile" data-sitekey="0x4AAAAAACwYj1gSjEOmHEXz"></div>
+
+                  <button type="submit" class="btn btn-secondary btn-block btn-md">Sign Up</button>
+
+                </form>
+
+                <div class="ath-note text-center">
+                  Already have an account? <a href="login.html"><strong>Sign in here</strong></a>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Preloader -->
+  <div class="preloader"><span class="spinner spinner-round"></span></div>
+
+  <!-- Local Scripts -->
+  <script src="/script/signup.js"></script>
+  <script src="/script/authCheck.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <script>
+    // Show/hide password toggle
+    function togglePass(inputId, checkbox) {
+      document.getElementById(inputId).type = checkbox.checked ? 'text' : 'password';
+    }
+
+    // Hide preloader once page loads
+    window.addEventListener('load', function () {
+      document.querySelector('.preloader').classList.add('loaded');
+      setTimeout(function () {
+        document.querySelector('.preloader').style.display = 'none';
+      }, 500);
+    });
+  </script>
+
+</body>
+</html>

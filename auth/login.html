@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Best investment site with stable returns.">
+  <title>Login - Batrus Trades</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/assets/images/logo.png">
+
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+
+  <!-- YOUR Auth CSS (upload auth.css to your server) -->
+  <link rel="stylesheet" href="/assets/css/login.css">
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+ 
+</head>
+
+<body class="nk-body body-wider bg-light-alt">
+
+  <div class="nk-wrap">
+    <main class="nk-pages">
+      <div class="section">
+        <div class="container">
+          <div class="nk-blocks d-flex justify-content-center">
+
+            <div class="ath-container m-0">
+              <div class="ath-body">
+
+                <!-- Logo -->
+                <center>
+                  <a href="../" class="text-center mb-3">
+                    <img src="/assets/images/logo.png" style="height:50px" />
+                  </a>
+                </center>
+
+                <!-- Title -->
+                <h5 class="ath-heading title">Sign In</h5>
+
+                <form action="" method="">
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="text" class="input-bordered" name="details" placeholder="Username or Email">
+                    </div>
+                  </div>
+
+                  <div class="field-item">
+                    <div class="field-wrap">
+                      <input type="password" class="input-bordered" name="password" placeholder="Password">
+                    </div>
+                  </div>
+
+                  <div class="field-item d-flex justify-content-between align-items-center">
+                    <div class="field-item pb-0">
+                      <input class="input-checkbox" id="remember-me-100" type="checkbox">
+                      <label for="remember-me-100">Remember Me</label>
+                    </div>
+                    <div class="forget-link fz-6">
+                      <a href="forgot-password.html">Forgot password?</a>
+                    </div>
+                  </div>
+
+                  <!-- Cloudflare Turnstile -->
+                  <div class="cf-turnstile" data-sitekey="0x4AAAAAACwYj1gSjEOmHEXz"></div>
+
+                  <button type="submit" class="btn btn-secondary btn-block btn-md">Sign In</button>
+
+                </form>
+
+                <div class="ath-note text-center">
+                  Don't have an account? <a href="signup.html"><strong>Sign up here</strong></a>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Preloader -->
+  <div class="preloader"><span class="spinner spinner-round"></span></div>
+
+  <!-- Local Scripts -->
+  <script src="/script/login.js"></script>
+  <script src="/script/authCheck.js"></script>
+
+  <!-- jQuery (needed by login.js likely) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- Hide preloader once page loads -->
+  <script>
+    window.addEventListener('load', function () {
+      document.querySelector('.preloader').classList.add('loaded');
+      setTimeout(function () {
+        document.querySelector('.preloader').style.display = 'none';
+      }, 500);
+    });
+  </script>
+
+</body>
+</html>

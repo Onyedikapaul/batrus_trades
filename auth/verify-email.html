@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/assets/images/logo.png">
+  <title>Verify Email - Batrus Trades</title>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+
+  <!-- Auth CSS (same as login/signup) -->
+  <link rel="stylesheet" href="/assets/css/signup.css">
+
+  <style>
+    /* ---- OTP Inputs ---- */
+    .code-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+
+    .code-input {
+      width: 52px;
+      height: 58px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      color: #1c2b46;
+      border: 1.5px solid #dbdfea;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+
+    .code-input:focus {
+      border-color: #1ee0ac;
+      box-shadow: 0 0 0 3px rgba(30, 224, 172, 0.15);
+    }
+
+    .code-input.filled {
+      border-color: #1ee0ac;
+    }
+
+    /* ---- Subtitle ---- */
+    .verify-subtitle {
+      color: #8094ae;
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    /* ---- Email hint ---- */
+    .email-hint {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #8094ae;
+      margin-bottom: 4px;
+    }
+
+    .email-hint strong {
+      color: #2c4a8f;
+    }
+
+    /* ---- Resend row ---- */
+    .resend-row {
+      margin-top: 1.25rem;
+      font-size: 0.875rem;
+      color: #8094ae;
+      text-align: center;
+    }
+
+    .resend-link {
+      color: #559bfb;
+      font-weight: 600;
+      background: none;
+      border: none;
+      font-size: inherit;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .resend-link:hover:not(:disabled) {
+      color: #17c99b;
+    }
+
+    .resend-link:disabled {
+      color: #8094ae;
+      cursor: not-allowed;
+    }
+
+    .resend-timer {
+      color: #8094ae;
+      font-size: 0.82rem;
+      margin-left: 4px;
+    }
+
+    /* ---- Toast ---- */
+    .toast-box {
+      position: fixed;
+      top: 28px;
+      right: 28px;
+      padding: 13px 22px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'Nunito', sans-serif;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      z-index: 99999;
+      pointer-events: none;
+      max-width: 320px;
+    }
+
+    .toast-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <!-- Smartsupp Live Chat -->
+  <script type="text/javascript">
+    var _smartsupp = _smartsupp || {};
+    _smartsupp.key = '68e6e25569ef0795c2d91fe03171d7ba7624e9d9';
+    window.smartsupp||(function(d) {
+      var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+      s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+      c.type='text/javascript';c.charset='utf-8';c.async=true;
+      c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+    })(document);
+  </script>
+  <noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+</head>
+
+<body class="nk-body body-wider bg-light-alt">
+
+  <!-- Toast -->
+  <div class="toast-box" id="toast"></div>
+
+  <div class="nk-wrap">
+    <main class="nk-pages">
+      <div class="section">
+        <div class="container">
+          <div class="nk-blocks d-flex justify-content-center">
+
+            <div class="ath-container m-0">
+              <div class="ath-body">
+
+                <!-- Logo -->
+                <center>
+                  <a href="/" class="text-center mb-3">
+                    <img src="/assets/images/logo.png" style="height:50px" />
+                  </a>
+                </center>
+
+                <!-- Title -->
+                <h5 class="ath-heading title">Verify Your Email</h5>
+
+                <p class="verify-subtitle">
+                  We sent a 6-digit code to your email address.<br>
+                  Enter it below to activate your account.
+                </p>
+
+                <div class="email-hint" id="emailHint"></div>
+
+                <!-- OTP Inputs -->
+                <div class="code-inputs">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                  <input class="code-input" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                </div>
+
+                <button id="verifyBtn" class="btn btn-secondary btn-block btn-md">
+                  Verify Email
+                </button>
+
+                <div class="resend-row">
+                  Didn't receive the code?
+                  <button class="resend-link" id="resendBtn">Resend code</button>
+                  <span class="resend-timer" id="resendTimer"></span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <script>
+    const inputs      = document.querySelectorAll('.code-input');
+    const verifyBtn   = document.getElementById('verifyBtn');
+    const resendBtn   = document.getElementById('resendBtn');
+    const resendTimer = document.getElementById('resendTimer');
+    const toast       = document.getElementById('toast');
+    const emailHint   = document.getElementById('emailHint');
+
+    // ── Get email from URL ──
+    const urlParams = new URLSearchParams(window.location.search);
+    const userEmail = urlParams.get('email');
+
+    if (!userEmail) {
+      showToast('⚠️ Invalid verification link.', false);
+      setTimeout(() => window.location.href = '/auth/signup.html', 2500);
+    } else {
+      emailHint.innerHTML = `Code sent to <strong>${userEmail}</strong>`;
+    }
+
+    // ── Toast ──
+    let toastTimeout;
+    function showToast(message, success = true) {
+      clearTimeout(toastTimeout);
+      toast.textContent = message;
+      toast.style.background = success ? '#1ee0ac' : '#e74c3c';
+      toast.style.color = success ? '#1c2b46' : '#fff';
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // ── Get full code ──
+    function getCode() {
+      return Array.from(inputs).map(i => i.value).join('');
+    }
+
+    // ── OTP input behaviour ──
+    inputs.forEach((input, i) => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/\D/g, '');
+        if (input.value) {
+          input.classList.add('filled');
+          if (i < inputs.length - 1) inputs[i + 1].focus();
+        } else {
+          input.classList.remove('filled');
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && i > 0) {
+          inputs[i - 1].focus();
+          inputs[i - 1].classList.remove('filled');
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        if (pasted.length === 6) {
+          inputs.forEach((inp, idx) => {
+            inp.value = pasted[idx] || '';
+            inp.classList.toggle('filled', !!inp.value);
+          });
+          inputs[5].focus();
+        }
+        e.preventDefault();
+      });
+    });
+
+    // ── Cooldown timer ──
+    let cooldown = 0;
+    let timerInterval = null;
+
+    function startCooldown() {
+      cooldown = 60;
+      resendBtn.disabled = true;
+      resendTimer.textContent = `(${cooldown}s)`;
+      timerInterval = setInterval(() => {
+        cooldown--;
+        resendTimer.textContent = `(${cooldown}s)`;
+        if (cooldown <= 0) {
+          clearInterval(timerInterval);
+          resendBtn.disabled = false;
+          resendTimer.textContent = '';
+        }
+      }, 1000);
+    }
+
+    // Start cooldown on load (code was just sent)
+    startCooldown();
+
+    // ── Verify ──
+    verifyBtn.addEventListener('click', async () => {
+      const code = getCode();
+      if (code.length < 6) {
+        showToast('⚠️ Enter the full 6-digit code.', false);
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch('/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, email: userEmail })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast('✅ ' + data.message, true);
+          setTimeout(() => window.location.href = data.redirectTo || '/account', 2000);
+        } else {
+          showToast('⚠️ ' + data.message, false);
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = 'Verify Email';
+        }
+      } catch {
+        showToast('⚠️ Network error. Try again.', false);
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify Email';
+      }
+    });
+
+    // ── Resend ──
+    resendBtn.addEventListener('click', async () => {
+      if (cooldown > 0) return;
+
+      resendBtn.disabled = true;
+      resendBtn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/auth/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_email: userEmail })
+        });
+        const data = await res.json();
+        showToast(data.success ? '✅ ' + data.message : '⚠️ ' + data.message, data.success);
+        if (data.success) startCooldown();
+      } catch {
+        showToast('⚠️ Network error. Try again.', false);
+      } finally {
+        resendBtn.textContent = 'Resend code';
+        if (cooldown <= 0) resendBtn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>

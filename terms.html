@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms & Conditions — BatrusTrades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f5f0e8;
+      --bg2:      #ede8de;
+      --white:    #fdfaf4;
+      --ink:      #1a1409;
+      --ink2:     #3d3425;
+      --muted:    #8a7d68;
+      --gold:     #b8860b;
+      --gold2:    #d4a017;
+      --gold-lt:  #f5e6c0;
+      --border:   rgba(26,20,9,0.10);
+      --border-g: rgba(184,134,11,0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(245,240,232,0.94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); text-decoration: none; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--gold); }
+    .nav-back { display: flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.3px; transition: color .2s; }
+    .nav-back:hover { color: var(--ink); }
+    .nav-back svg { width: 14px; height: 14px; stroke: currentColor; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      border-bottom: 1px solid rgba(184,134,11,0.2);
+      padding: 72px 2rem 60px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(184,134,11,0.04) 40px),
+                        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,134,11,0.04) 40px);
+      pointer-events: none;
+    }
+    .hero-badge {
+      position: relative;
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border-g);
+      border-radius: 50px;
+      padding: 4px 16px;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold2); font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      position: relative;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 300; line-height: 1.05;
+      color: var(--white); margin-bottom: 12px;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold2); }
+    .hero p { position: relative; color: rgba(253,250,244,0.45); font-size: 14px; max-width: 440px; margin: 0 auto; }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto;
+      padding: 64px 2rem 100px;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 56px; align-items: start;
+    }
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: sticky; top: 84px; }
+    .sidebar-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar ul li a {
+      display: block; padding: 7px 12px;
+      font-size: 12.5px; color: var(--muted); text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all .2s;
+    }
+    .sidebar ul li a:hover { color: var(--ink); background: var(--gold-lt); border-left-color: var(--gold); }
+    .sidebar-updated {
+      margin-top: 24px; padding: 14px 16px;
+      background: var(--white); border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      font-size: 12px; color: var(--muted); line-height: 1.6;
+    }
+    .sidebar-updated strong { color: var(--gold); display: block; margin-bottom: 2px; font-weight: 600; }
+
+    /* ── CONTENT ── */
+    .content { min-width: 0; }
+
+    .section-block {
+      margin-bottom: 52px;
+      animation: fadeUp .4s ease both;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .section-block:nth-child(1)  { animation-delay: .05s; }
+    .section-block:nth-child(2)  { animation-delay: .10s; }
+    .section-block:nth-child(3)  { animation-delay: .15s; }
+    .section-block:nth-child(4)  { animation-delay: .20s; }
+    .section-block:nth-child(5)  { animation-delay: .25s; }
+    .section-block:nth-child(6)  { animation-delay: .30s; }
+    .section-block:nth-child(7)  { animation-delay: .35s; }
+    .section-block:nth-child(8)  { animation-delay: .40s; }
+    .section-block:nth-child(9)  { animation-delay: .45s; }
+    .section-block:nth-child(10) { animation-delay: .50s; }
+    .section-block:nth-child(11) { animation-delay: .55s; }
+    .section-block:nth-child(12) { animation-delay: .60s; }
+
+    .section-number { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+
+    .section-block h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 600; color: var(--ink);
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-block p { color: var(--muted); margin-bottom: 12px; font-size: 14.5px; }
+
+    .section-block ul { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .section-block ul li {
+      display: flex; align-items: flex-start; gap: 12px;
+      color: var(--muted); font-size: 14.5px;
+    }
+    .section-block ul li::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0; margin-top: 9px;
+    }
+
+    .highlight-box {
+      background: var(--gold-lt);
+      border: 1px solid var(--border-g);
+      border-left: 3px solid var(--gold);
+      padding: 16px 20px; margin: 16px 0;
+      font-size: 14px; color: var(--ink2); line-height: 1.7;
+    }
+    .warning-box {
+      background: rgba(26,20,9,0.04);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--ink2);
+      padding: 16px 20px; margin: 16px 0;
+      font-size: 14px; color: var(--ink2); line-height: 1.7;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0f0b04;
+      border-top: 1px solid rgba(184,134,11,0.15);
+      padding: 28px 2rem;
+      text-align: center;
+      font-size: 13px; color: rgba(253,250,244,0.3);
+    }
+    footer a { color: var(--gold2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer strong { color: var(--white); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Batrus<span>Trades</span></a>
+  <a href="/" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Home
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Legal Document</div>
+  <h1>Terms &amp; <em>Conditions</em></h1>
+  <p>Please read these terms carefully before using our platform or making any investment.</p>
+</div>
+
+<div class="page-wrap">
+
+  <aside class="sidebar">
+    <p class="sidebar-label">On this page</p>
+    <ul>
+      <li><a href="#acceptance">1. Acceptance of Terms</a></li>
+      <li><a href="#eligibility">2. Eligibility</a></li>
+      <li><a href="#account">3. Account Registration</a></li>
+      <li><a href="#investments">4. Investment Plans</a></li>
+      <li><a href="#deposits">5. Deposits & Withdrawals</a></li>
+      <li><a href="#referral">6. Referral Program</a></li>
+      <li><a href="#risks">7. Risk Disclosure</a></li>
+      <li><a href="#prohibited">8. Prohibited Activities</a></li>
+      <li><a href="#liability">9. Limitation of Liability</a></li>
+      <li><a href="#privacy">10. Privacy Policy</a></li>
+      <li><a href="#termination">11. Termination</a></li>
+      <li><a href="#contact">12. Contact Us</a></li>
+    </ul>
+    <div class="sidebar-updated">
+      <strong>Last Updated</strong>
+      March 25, 2026
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <div class="section-block" id="acceptance">
+      <div class="section-number">Section 01</div>
+      <h2>Acceptance of Terms</h2>
+      <p>By accessing or using BatrusTrades ("the Platform", "we", "us", or "our"), you agree to be legally bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our platform.</p>
+      <p>We reserve the right to update or modify these Terms at any time without prior notice. Continued use of the platform after any changes constitutes your acceptance of the new Terms.</p>
+      <div class="highlight-box">
+        These Terms constitute the entire agreement between you and BatrusTrades regarding your use of the platform and supersede all prior agreements.
+      </div>
+    </div>
+
+    <div class="section-block" id="eligibility">
+      <div class="section-number">Section 02</div>
+      <h2>Eligibility</h2>
+      <p>To use BatrusTrades, you must meet the following requirements:</p>
+      <ul>
+        <li>Be at least 18 years of age or the legal age of majority in your jurisdiction</li>
+        <li>Have the legal capacity to enter into a binding contract</li>
+        <li>Not be a resident of any jurisdiction where such services are prohibited by law</li>
+        <li>Not be on any government sanctions list or otherwise prohibited from receiving services</li>
+      </ul>
+      <p>By registering, you confirm that you meet all eligibility requirements. We reserve the right to verify your identity at any time.</p>
+    </div>
+
+    <div class="section-block" id="account">
+      <div class="section-number">Section 03</div>
+      <h2>Account Registration</h2>
+      <p>You are required to create an account to access our investment services. You agree to:</p>
+      <ul>
+        <li>Provide accurate, current, and complete registration information</li>
+        <li>Maintain the security of your password and accept responsibility for all activities under your account</li>
+        <li>Notify us immediately of any unauthorized use of your account</li>
+        <li>Not share your account credentials with any third party</li>
+        <li>Maintain only one active account per person</li>
+      </ul>
+      <div class="warning-box">
+        BatrusTrades will never ask for your password via email, chat, or phone. Never share your login credentials with anyone.
+      </div>
+    </div>
+
+    <div class="section-block" id="investments">
+      <div class="section-number">Section 04</div>
+      <h2>Investment Plans</h2>
+      <p>BatrusTrades offers several investment plans with defined return percentages and durations. By selecting a plan, you acknowledge and agree that:</p>
+      <ul>
+        <li>Investment amounts must fall within the specified minimum and maximum range for each plan</li>
+        <li>Returns are calculated based on the advertised percentage for the selected plan duration</li>
+        <li>Principal is returned at the end of each investment cycle along with profits</li>
+        <li>Plans are subject to change or discontinuation at our discretion with reasonable notice</li>
+        <li>Promotional plans may be available for limited periods and are subject to separate terms</li>
+      </ul>
+      <p>Past performance of any investment plan does not guarantee future results. All investment activity carries inherent risk.</p>
+    </div>
+
+    <div class="section-block" id="deposits">
+      <div class="section-number">Section 05</div>
+      <h2>Deposits &amp; Withdrawals</h2>
+      <p>All transactions on BatrusTrades are conducted exclusively in supported cryptocurrencies. You agree to the following:</p>
+      <ul>
+        <li>Deposits are credited after the required number of blockchain network confirmations</li>
+        <li>Withdrawals are processed to the wallet address provided in your account profile</li>
+        <li>You are solely responsible for providing correct wallet addresses — transactions sent to wrong addresses cannot be reversed</li>
+        <li>Minimum withdrawal amounts apply per cryptocurrency as specified in your dashboard</li>
+        <li>We reserve the right to request identity verification before processing withdrawals</li>
+        <li>Withdrawals may be delayed in cases of suspected fraud or security concerns</li>
+      </ul>
+      <div class="warning-box">
+        Cryptocurrency transactions are irreversible. Always double-check wallet addresses before confirming any withdrawal.
+      </div>
+    </div>
+
+    <div class="section-block" id="referral">
+      <div class="section-number">Section 06</div>
+      <h2>Referral Program</h2>
+      <p>BatrusTrades operates a referral program that rewards users for introducing new investors to the platform. The following conditions apply:</p>
+      <ul>
+        <li>Referral commissions are earned on qualifying deposits made by users you refer</li>
+        <li>Commission rates are as displayed on the platform and may change at any time</li>
+        <li>Self-referrals, circular referrals, or any manipulation of the referral system is strictly prohibited</li>
+        <li>Referral earnings are credited to your account balance and may be withdrawn or reinvested</li>
+        <li>We reserve the right to withhold or reverse referral commissions obtained fraudulently</li>
+      </ul>
+    </div>
+
+    <div class="section-block" id="risks">
+      <div class="section-number">Section 07</div>
+      <h2>Risk Disclosure</h2>
+      <p>Investing in cryptocurrency and digital asset markets involves substantial risk. Before investing, you should carefully consider the following:</p>
+      <ul>
+        <li>Cryptocurrency values are highly volatile and can decrease significantly in short periods</li>
+        <li>Past returns do not guarantee future performance</li>
+        <li>You may lose some or all of your invested capital</li>
+        <li>Regulatory changes may affect the availability or legality of our services in your jurisdiction</li>
+        <li>Technical issues, cyberattacks, or network failures may impact platform availability</li>
+      </ul>
+      <div class="highlight-box">
+        Only invest funds you can afford to lose. BatrusTrades strongly recommends consulting a qualified financial advisor before making any investment decisions.
+      </div>
+    </div>
+
+    <div class="section-block" id="prohibited">
+      <div class="section-number">Section 08</div>
+      <h2>Prohibited Activities</h2>
+      <p>You agree not to engage in any of the following prohibited activities:</p>
+      <ul>
+        <li>Using the platform for money laundering, fraud, or any illegal activity</li>
+        <li>Attempting to hack, reverse-engineer, or disrupt platform systems</li>
+        <li>Creating multiple accounts to exploit bonuses or promotions</li>
+        <li>Providing false or misleading information during registration or verification</li>
+        <li>Using automated bots or scripts to interact with the platform</li>
+        <li>Engaging in any activity that violates applicable laws or regulations</li>
+      </ul>
+      <p>Violation of these prohibitions may result in immediate account suspension, forfeiture of funds, and legal action.</p>
+    </div>
+
+    <div class="section-block" id="liability">
+      <div class="section-number">Section 09</div>
+      <h2>Limitation of Liability</h2>
+      <p>To the fullest extent permitted by law, BatrusTrades shall not be liable for:</p>
+      <ul>
+        <li>Any indirect, incidental, special, or consequential damages arising from platform use</li>
+        <li>Loss of profits, data, or investment capital</li>
+        <li>Losses resulting from unauthorized access to your account due to your negligence</li>
+        <li>Delays, interruptions, or errors in platform services beyond our reasonable control</li>
+        <li>Actions or omissions of third-party service providers including blockchain networks</li>
+      </ul>
+      <p>Our total liability in any circumstances shall not exceed the total amount deposited by you in the 30 days preceding the event giving rise to the claim.</p>
+    </div>
+
+    <div class="section-block" id="privacy">
+      <div class="section-number">Section 10</div>
+      <h2>Privacy Policy</h2>
+      <p>Your privacy is important to us. By using BatrusTrades, you consent to the collection and use of your information as described below:</p>
+      <ul>
+        <li>We collect registration data, transaction history, and usage information to operate the platform</li>
+        <li>Your data is never sold to third parties for marketing purposes</li>
+        <li>We may share information with law enforcement when required by law</li>
+        <li>We use industry-standard encryption to protect your data in transit and at rest</li>
+        <li>You may request deletion of your account and associated data by contacting support</li>
+      </ul>
+    </div>
+
+    <div class="section-block" id="termination">
+      <div class="section-number">Section 11</div>
+      <h2>Termination</h2>
+      <p>BatrusTrades reserves the right to suspend or terminate your account at any time for any of the following reasons:</p>
+      <ul>
+        <li>Violation of these Terms and Conditions</li>
+        <li>Suspected fraudulent, abusive, or illegal activity</li>
+        <li>Failure to complete identity verification when requested</li>
+        <li>At our sole discretion with or without cause</li>
+      </ul>
+      <p>Upon termination, your access to the platform will be revoked. Any pending investments will be handled in accordance with the applicable plan terms. We are not liable for any losses resulting from account termination due to Terms violations.</p>
+    </div>
+
+    <div class="section-block" id="contact">
+      <div class="section-number">Section 12</div>
+      <h2>Contact Us</h2>
+      <p>If you have any questions or concerns about these Terms and Conditions, please reach out to our support team:</p>
+      <ul>
+        <li>Email: support@batrustrades.com</li>
+        <li>Address: Weteringstraat 34-1, 1017 SP Amsterdam, Netherlands</li>
+        <li>Support hours: 24/7 — we respond within 1 hour</li>
+      </ul>
+      <div class="highlight-box">
+        By continuing to use BatrusTrades, you acknowledge that you have read, understood, and agreed to these Terms and Conditions in their entirety.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <p>© 2026 <strong>BatrusTrades</strong>. All Rights Reserved. &nbsp;|&nbsp; <a href="/">Home</a> &nbsp;|&nbsp; <a href="/auth/login.html">Sign In</a> &nbsp;|&nbsp; <a href="/auth/signup.html">Open Account</a></p>
+</footer>
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+
+</body>
+</html>

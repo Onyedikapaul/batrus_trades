@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Best investment site with stable returns.">
+    <title>Withdraw - Batrus Trades</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+
+    <!-- Font Awesome 4.7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+
+    <!-- Local Argon CSS -->
+    <link rel="stylesheet" href="/assets/account/argon.css">
+
+    <style>
+        .main-content {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 1199px) {
+            .main-content { margin-left: 0; }
+        }
+
+        /* ---- Preloader ---- */
+        #page-preloader {
+            position: fixed; inset: 0; background: #fff;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #page-preloader.fade-out { opacity: 0; visibility: hidden; }
+        .preloader-logo { height: 56px; margin-bottom: 28px; animation: pulse-logo 1.6s ease-in-out infinite; }
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(1.06); opacity: 0.8; }
+        }
+        .preloader-bar-wrap { width: 200px; height: 4px; background: #e9ecef; border-radius: 99px; overflow: hidden; }
+        .preloader-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #f5a623, #ffd166);
+            border-radius: 99px;
+            animation: bar-fill 1.8s ease forwards;
+        }
+        @keyframes bar-fill { 0% { width: 0%; } 60% { width: 75%; } 100% { width: 100%; } }
+        .preloader-text {
+            margin-top: 14px; font-family: 'Open Sans', sans-serif;
+            font-size: 0.78rem; font-weight: 600;
+            color: #8898aa; letter-spacing: 0.08em; text-transform: uppercase;
+        }
+
+        /* ---- Coin list ---- */
+        .coin-list { border: 1px solid #e9ecef; border-radius: 0.5rem; overflow: hidden; }
+        .coin-list .coin-list-label {
+            padding: 0.6rem 1rem;
+            font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: #8898aa; background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .coin-list-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.65rem 1rem;
+            font-size: 0.875rem; color: #525f7f; font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s;
+        }
+        .coin-list-item:last-child { border-bottom: none; }
+        .coin-list-item:hover { background: #f8f9fe; }
+        .coin-list-item img { width: 22px; flex-shrink: 0; }
+        .coin-list-item .fa-bitcoin { font-size: 1.2rem; color: #f7931a; width: 22px; text-align: center; }
+
+        /* ---- Balance banner ---- */
+        .balance-banner {
+            background: linear-gradient(135deg, #11cdef 0%, #0da5c9 100%);
+            border-radius: 0.5rem;
+            padding: 0.9rem 1.25rem;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .balance-banner .balance-amount {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        /* ---- Form labels & inputs ---- */
+        .form-control-label {
+            font-size: 0.75rem; font-weight: 600;
+            color: #525f7f; text-transform: uppercase;
+            letter-spacing: 0.04em; margin-bottom: 0.4rem; display: block;
+        }
+        .form-control {
+            border: 1px solid #dee2e6; border-radius: 0.375rem;
+            padding: 0.6rem 0.9rem; font-size: 0.875rem;
+            color: #495057; background: #fff; width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Open Sans', sans-serif; display: block;
+        }
+        .form-control:focus {
+            border-color: #f5a623;
+            box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+            outline: none;
+        }
+        textarea.form-control { resize: vertical; min-height: 90px; }
+        .form-group { margin-bottom: 1.25rem; }
+
+        .field-hint {
+            font-size: 0.78rem;
+            color: #8898aa;
+            margin-top: 0.35rem;
+        }
+
+        /* ---- Withdraw button ---- */
+        .btn-withdraw {
+            background: #f5a623; color: #fff; border: none;
+            border-radius: 0.375rem; padding: 0.7rem 2.5rem;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            font-family: 'Open Sans', sans-serif;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn-withdraw:hover { background: #e09510; transform: translateY(-1px); }
+        .btn-withdraw:disabled { background: #adb5bd; cursor: not-allowed; transform: none; }
+
+        /* ---- History link ---- */
+        .history-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: #f5a623; font-size: 0.875rem; font-weight: 600;
+            margin-top: 1rem; text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .history-link:hover { opacity: 0.8; color: #f5a623; }
+    </style>
+
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+    
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div id="page-preloader">
+        <img src="/assets/images/logo.png" class="preloader-logo" alt="Batrus Trades">
+        <div class="preloader-bar-wrap"><div class="preloader-bar"></div></div>
+        <div class="preloader-text">Loading withdraw...</div>
+    </div>
+
+    <!-- Sidenav -->
+    <div id="sidenav-mount"></div>
+
+    <div class="main-content" id="panel">
+        <!-- Topnav -->
+        <div id="topnav-mount"></div>
+
+        <!-- Header -->
+        <div class="header bg-primary pb-6">
+            <div class="container-fluid">
+                <div class="header-body">
+                    <div class="row align-items-center py-4">
+                        <div class="col-12">
+                            <h6 class="h2 text-white d-inline-block mb-0">Withdraw</h6>
+                            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                    <li class="breadcrumb-item"><a href="/account/"><i class="fa fa-home"></i></a></li>
+                                    <li class="breadcrumb-item active">Withdraw</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="container-fluid mt--6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+
+                        <!-- Left: Accepted coins -->
+                        <div class="col-sm-4 mb-4">
+                            <div class="coin-list">
+                                <div class="coin-list-label">We Accept</div>
+                                <div class="coin-list-item"><i class="fa fa-bitcoin"></i> Bitcoin (BTC)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/external-black-fill-lafs/64/null/external-Bitcoin-Cash-cryptocurrency-black-fill-lafs.png" width="22"> Bitcoin Cash (BCH)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/fluency/48/null/ethereum.png" width="22"> Ethereum (ETH)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/ios-filled/50/null/dogecoin.png" width="22"> Dogecoin (DOGE)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/color/48/null/tether--v2.png" width="22"> USDTether (USDT)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/color/48/null/xrp.png" width="22"> Ripple (XRP)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/external-black-fill-lafs/64/null/external-TRON-cryptocurrency-black-fill-lafs.png" width="22"> Tron (TRX)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/external-black-fill-lafs/64/null/external-Binance-cryptocurrency-black-fill-lafs.png" width="22"> BNB (BNB)</div>
+                                <div class="coin-list-item"><img src="https://img.icons8.com/external-black-fill-lafs/64/null/external-Solana-cryptocurrency-black-fill-lafs.png" width="22"> Solana (SOL)</div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Withdrawal form -->
+                        <div class="col-sm-8">
+
+                            <!-- Available balance banner -->
+                            <div class="balance-banner">
+                                <i class="fa fa-dollar"></i>
+                                Available Balance:
+                                <span class="balance-amount">
+                                    $<span class="user-account-balance">0.00</span>
+                                </span>
+                            </div>
+
+                            <form id="withdrawal-form">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="amount">Amount ($)</label>
+                                    <input type="number" id="amount" class="form-control" min="5" value="5" name="amount" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="payment_method">Withdrawal method</label>
+                                            <select id="payment_method" class="form-control" name="currency" required>
+                                                <option value="" disabled selected>— Select Payment Method —</option>
+                                                <option value="bitcoin">Bitcoin (BTC)</option>
+                                                <option value="ethereum">Ethereum (ETH)</option>
+                                                <option value="tether usdt trc20">Tether USDT TRC20</option>
+                                                <option value="tether usdt erc20">Tether USDT ERC20</option>
+                                                <option value="tether usdt bep20">Tether USDT BEP20</option>
+                                                <option value="bitcoin cash">Bitcoin Cash (BCH)</option>
+                                                <option value="xrp">XRP (Ripple)</option>
+                                                <option value="tron">Tron (TRX)</option>
+                                                <option value="doge">Dogecoin (DOGE)</option>
+                                                <option value="bnb smart chain">BNB Smart Chain</option>
+                                                <option value="solana">Solana (SOL)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="title">Wallet Title (if any)</label>
+                                            <input type="text" id="title" class="form-control" name="title" placeholder="Optional">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-control-label" for="address">Wallet address</label>
+                                    <input type="text" id="address" class="form-control" name="address" placeholder="Enter your wallet address" required>
+                                    <p class="field-hint">
+                                        <i class="fa fa-exclamation-circle mr-1"></i>
+                                        Please ensure you provide the correct address. Batrus Trades will not be held responsible for errors in the details you provide.
+                                    </p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-control-label" for="description">Description (if any)</label>
+                                    <textarea id="description" class="form-control" name="description" placeholder="Optional"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn-withdraw">
+                                    <i class="fa fa-paper-plane"></i> Withdraw
+                                </button>
+                            </form>
+
+                            <a href="withdrawal-history.html" class="history-link">
+                                <i class="fa fa-history"></i> Withdrawal History
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer pt-0">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6">
+                        <div class="copyright text-center text-lg-left text-muted">
+                            &copy; 2026 <a href="/account" class="font-weight-bold ml-1" target="_blank">Batrus Trades</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="/account/terms.html" class="nav-link">Terms</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Local scripts -->
+    <script src="/auth-script/load-sidenav.js"></script>
+    <script src="/auth-script/load-topnav.js"></script>
+    <script src="/auth-script/load-user-data.js"></script>
+    <script src="/auth-script/checkAuth.js"></script>
+    <script src="/auth-script/withdrawal.js"></script>
+    <script src="/auth-script/deposit.js"></script>
+    <script src="/auth-script/load-portfolio.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <!-- JS Cookie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+
+    <!-- Google Translate -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://translate.yandex.net/website-widget/v1/widget.js?widgetId=ytWidget&pageLang=en&widgetTheme=light&autoMode=false" type="text/javascript"></script>
+
+    <script>
+        // ── Preloader ──
+        window.addEventListener('load', function () {
+            const preloader = document.getElementById('page-preloader');
+            setTimeout(function () {
+                preloader.classList.add('fade-out');
+                setTimeout(function () { preloader.style.display = 'none'; }, 500);
+            }, 400);
+        });
+    </script>
+</body>
+ 
+</html>

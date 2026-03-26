@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Terms & Conditions - Batrus Trades</title>
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" />
+
+    <!-- Font Awesome 5 (free CDN) — needed for fas fa-* icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" />
+
+    <style>
+      :root {
+        --brand:       #f5a623;
+        --brand-dark:  #e09510;
+        --brand-light: #fff3cd;
+        --brand-pale:  #fff8ec;
+      }
+
+      body {
+        background: #f8f9fe;
+        font-family: "Open Sans", sans-serif;
+      }
+
+      /* ---- Hero ---- */
+      .terms-hero {
+        background: linear-gradient(135deg, #1a1a4e 0%, #0b2f55 60%, #033d75 100%);
+        padding: 60px 0 80px;
+        position: relative;
+        overflow: hidden;
+      }
+      .terms-hero::before {
+        content: "";
+        position: absolute; top: -60px; right: -60px;
+        width: 320px; height: 320px; border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+      }
+      .terms-hero::after {
+        content: "";
+        position: absolute; bottom: -80px; left: 10%;
+        width: 200px; height: 200px; border-radius: 50%;
+        background: rgba(255,255,255,0.03);
+      }
+      .terms-hero h1 {
+        color: #fff; font-size: 2.4rem; font-weight: 700;
+        margin: 0 0 10px; letter-spacing: -0.02em;
+      }
+      .terms-hero p {
+        color: rgba(255,255,255,0.7); font-size: 15px; margin: 0;
+      }
+      .terms-hero .badge-updated {
+        display: inline-block;
+        background: rgba(255,255,255,0.12);
+        color: rgba(255,255,255,0.85);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 5px 14px; border-radius: 999px;
+        font-size: 12px; font-weight: 600; margin-bottom: 18px;
+        letter-spacing: 0.04em;
+      }
+
+      /* ---- Body ---- */
+      .terms-body { margin-top: -40px; padding-bottom: 60px; }
+
+      .terms-card {
+        background: #fff; border-radius: 16px;
+        box-shadow: 0 4px 32px rgba(0,0,0,0.08); overflow: hidden;
+      }
+
+      /* ---- TOC ---- */
+      .terms-toc {
+        background: #f8f9fe;
+        border-right: 1px solid #e9ecef;
+        padding: 28px 20px;
+        position: sticky; top: 20px;
+      }
+      .terms-toc h6 {
+        font-size: 11px; text-transform: uppercase;
+        letter-spacing: 0.08em; color: #8898aa;
+        font-weight: 700; margin-bottom: 14px;
+      }
+      .toc-link {
+        display: flex; align-items: center; gap: 8px;
+        padding: 8px 10px; border-radius: 8px;
+        color: #525f7f; font-size: 13px; font-weight: 500;
+        text-decoration: none; transition: all 0.2s; margin-bottom: 2px;
+      }
+      .toc-link:hover, .toc-link.active {
+        background: var(--brand-light);
+        color: var(--brand-dark);
+        text-decoration: none;
+      }
+      .toc-link .toc-num {
+        width: 20px; height: 20px; background: #e9ecef;
+        border-radius: 50%; font-size: 10px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        color: #8898aa; flex-shrink: 0;
+        transition: background 0.2s, color 0.2s;
+      }
+      .toc-link:hover .toc-num, .toc-link.active .toc-num {
+        background: var(--brand);
+        color: #fff;
+      }
+
+      /* ---- Content ---- */
+      .terms-content { padding: 40px 44px; }
+      @media (max-width: 768px) {
+        .terms-content { padding: 28px 20px; }
+        .terms-toc { display: none; }
+      }
+
+      .terms-section {
+        margin-bottom: 44px; padding-bottom: 44px;
+        border-bottom: 1px solid #f0f0f8;
+      }
+      .terms-section:last-child {
+        margin-bottom: 0; padding-bottom: 0; border-bottom: none;
+      }
+
+      .section-header {
+        display: flex; align-items: center;
+        gap: 14px; margin-bottom: 18px;
+      }
+      .section-icon {
+        width: 42px; height: 42px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; flex-shrink: 0;
+      }
+
+      /* All icons now use orange palette */
+      .icon-blue   { background: var(--brand-light); color: var(--brand-dark); }
+      .icon-green  { background: var(--brand-light); color: var(--brand-dark); }
+      .icon-orange { background: var(--brand-light); color: var(--brand-dark); }
+      .icon-red    { background: #fde8e8; color: #c0392b; }
+      .icon-teal   { background: var(--brand-light); color: var(--brand-dark); }
+      .icon-purple { background: var(--brand-light); color: var(--brand-dark); }
+      .icon-dark   { background: #e9ecef; color: #32325d; }
+      .icon-navy   { background: var(--brand-light); color: var(--brand-dark); }
+
+      .section-header h2 {
+        margin: 0; font-size: 17px; font-weight: 700;
+        color: #32325d; letter-spacing: -0.01em;
+      }
+      .section-header .section-num {
+        font-size: 11px; color: #8898aa;
+        font-weight: 600; margin-top: 2px;
+      }
+
+      .terms-content p {
+        font-size: 14px; color: #525f7f;
+        line-height: 1.8; margin-bottom: 14px;
+      }
+      .terms-content p:last-child { margin-bottom: 0; }
+
+      /* ---- Lists ---- */
+      .terms-list { list-style: none; padding: 0; margin: 0 0 14px; }
+      .terms-list li {
+        display: flex; align-items: flex-start; gap: 10px;
+        font-size: 14px; color: #525f7f; line-height: 1.7;
+        padding: 6px 0; border-bottom: 1px dashed #f0f0f8;
+      }
+      .terms-list li:last-child { border-bottom: none; }
+      .terms-list li::before {
+        content: "";
+        width: 6px; height: 6px;
+        background: var(--brand);
+        border-radius: 50%; flex-shrink: 0; margin-top: 8px;
+      }
+
+      /* ---- Callout boxes ---- */
+      .highlight-box {
+        background: var(--brand-pale);
+        border: 1px solid #fde8c8;
+        border-left: 4px solid var(--brand);
+        border-radius: 0 10px 10px 0;
+        padding: 16px 20px; margin: 18px 0;
+        font-size: 14px; color: #7d4e00; line-height: 1.7;
+      }
+      .warning-box {
+        background: #fff8f0;
+        border: 1px solid #fde8c8;
+        border-left: 4px solid var(--brand);
+        border-radius: 0 10px 10px 0;
+        padding: 16px 20px; margin: 18px 0;
+        font-size: 14px; color: #7d4e00; line-height: 1.7;
+      }
+      .danger-box {
+        background: #fff5f5;
+        border: 1px solid #fde8e8;
+        border-left: 4px solid #e74c3c;
+        border-radius: 0 10px 10px 0;
+        padding: 16px 20px; margin: 18px 0;
+        font-size: 14px; color: #8b1a1a; line-height: 1.7;
+      }
+
+      /* ---- Contact grid ---- */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px; margin-top: 18px;
+      }
+      .contact-item {
+        background: var(--brand-pale);
+        border: 1px solid #fde8c8;
+        border-radius: 12px;
+        padding: 16px; text-align: center;
+      }
+      .contact-item i {
+        font-size: 22px; color: var(--brand);
+        margin-bottom: 8px; display: block;
+      }
+      .contact-item .contact-label {
+        font-size: 11px; text-transform: uppercase;
+        letter-spacing: 0.06em; color: #8898aa;
+        font-weight: 700; margin-bottom: 4px;
+      }
+      .contact-item .contact-value {
+        font-size: 13px; color: #32325d; font-weight: 600;
+      }
+
+      /* ---- Footer bar ---- */
+      .terms-footer-bar {
+        background: #f8f9fe;
+        border-top: 1px solid #e9ecef;
+        padding: 20px 44px;
+        display: flex; align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap; gap: 12px;
+      }
+      .terms-footer-bar p { margin: 0; font-size: 13px; color: #8898aa; }
+      .terms-footer-bar a {
+        font-size: 13px; color: var(--brand);
+        font-weight: 600; text-decoration: none;
+      }
+      .terms-footer-bar a:hover { text-decoration: underline; }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Hero -->
+    <div class="terms-hero">
+      <div class="container">
+        <div class="badge-updated">Last updated: January 2026</div>
+        <h1>Terms &amp; Conditions</h1>
+        <p>Please read these terms carefully before using Batrus Trades services.</p>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="terms-body">
+      <div class="container">
+        <div class="terms-card">
+          <div class="row no-gutters">
+
+            <!-- TOC Sidebar -->
+            <div class="col-lg-3">
+              <div class="terms-toc">
+                <h6>Contents</h6>
+                <a href="#sec1" class="toc-link"><span class="toc-num">1</span> Introduction</a>
+                <a href="#sec2" class="toc-link"><span class="toc-num">2</span> Account Registration</a>
+                <a href="#sec3" class="toc-link"><span class="toc-num">3</span> Investment Risks</a>
+                <a href="#sec4" class="toc-link"><span class="toc-num">4</span> Deposits &amp; Withdrawals</a>
+                <a href="#sec5" class="toc-link"><span class="toc-num">5</span> Prohibited Activities</a>
+                <a href="#sec6" class="toc-link"><span class="toc-num">6</span> Privacy Policy</a>
+                <a href="#sec7" class="toc-link"><span class="toc-num">7</span> Termination</a>
+                <a href="#sec8" class="toc-link"><span class="toc-num">8</span> Contact Us</a>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+              <div class="terms-content">
+
+                <!-- 1 -->
+                <div class="terms-section" id="sec1">
+                  <div class="section-header">
+                    <div class="section-icon icon-blue"><i class="fa-solid fa-file-contract"></i></div>
+                    <div>
+                      <div class="section-num">Section 01</div>
+                      <h2>Introduction &amp; Acceptance</h2>
+                    </div>
+                  </div>
+                  <p>Welcome to <strong>Batrus Trades</strong>. By accessing or using our platform, website, or any of our services, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services.</p>
+                  <p>These Terms constitute a legally binding agreement between you ("User", "you") and Batrus Trades ("we", "us", "our"). We reserve the right to update these Terms at any time. Continued use of the platform after any changes constitutes acceptance of the new Terms.</p>
+                  <div class="highlight-box">
+                    <strong>By creating an account, you confirm that you are at least 18 years of age</strong>, have the legal capacity to enter into this agreement, and are not prohibited by any applicable law from using our services.
+                  </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="terms-section" id="sec2">
+                  <div class="section-header">
+                    <div class="section-icon icon-green"><i class="fa-solid fa-user-check"></i></div>
+                    <div>
+                      <div class="section-num">Section 02</div>
+                      <h2>Account Registration</h2>
+                    </div>
+                  </div>
+                  <p>To use Batrus Trades, you must register for an account by providing accurate, complete, and current information. You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.</p>
+                  <ul class="terms-list">
+                    <li>You must provide a valid email address and verify it before accessing your account.</li>
+                    <li>You may only hold one account. Creating multiple accounts is strictly prohibited.</li>
+                    <li>You must notify us immediately of any unauthorized use of your account.</li>
+                    <li>We reserve the right to suspend or terminate accounts that violate these Terms.</li>
+                    <li>Account information must be kept up to date at all times.</li>
+                    <li>You are responsible for all activity originating from your account.</li>
+                  </ul>
+                </div>
+
+                <!-- 3 -->
+                <div class="terms-section" id="sec3">
+                  <div class="section-header">
+                    <div class="section-icon icon-orange"><i class="fa-solid fa-chart-line"></i></div>
+                    <div>
+                      <div class="section-num">Section 03</div>
+                      <h2>Investment Risks</h2>
+                    </div>
+                  </div>
+                  <p>Investing through Batrus Trades involves financial risk. Past performance is not indicative of future results. You should only invest funds that you can afford to lose.</p>
+                  <div class="warning-box">
+                    ⚠️ <strong>Risk Warning:</strong> The value of investments can go down as well as up. You may get back less than you invest. Batrus Trades does not guarantee any specific return on investment.
+                  </div>
+                  <ul class="terms-list">
+                    <li>All investment plans are subject to market conditions and platform performance.</li>
+                    <li>Returns displayed are estimates and are not guaranteed.</li>
+                    <li>You acknowledge that you have read and understood the risks involved before investing.</li>
+                    <li>Batrus Trades shall not be held liable for any investment losses incurred.</li>
+                    <li>We recommend consulting a financial advisor before making investment decisions.</li>
+                  </ul>
+                </div>
+
+                <!-- 4 -->
+                <div class="terms-section" id="sec4">
+                  <div class="section-header">
+                    <div class="section-icon icon-teal"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                    <div>
+                      <div class="section-num">Section 04</div>
+                      <h2>Deposits &amp; Withdrawals</h2>
+                    </div>
+                  </div>
+                  <p>All deposits and withdrawal requests are subject to review and processing by our team. We reserve the right to request identity verification or supporting documentation before processing any transaction.</p>
+                  <ul class="terms-list">
+                    <li>Minimum deposit and withdrawal amounts are specified on the platform and subject to change.</li>
+                    <li>Withdrawal requests may take 1–5 business days to process depending on payment method.</li>
+                    <li>We reserve the right to place holds on withdrawals during security reviews.</li>
+                    <li>Funds deposited must originate from accounts in your name. Third-party deposits are not accepted.</li>
+                    <li>Any fees associated with transactions will be clearly displayed before confirmation.</li>
+                    <li>Batrus Trades is not responsible for delays caused by third-party payment processors.</li>
+                  </ul>
+                  <div class="highlight-box">
+                    Withdrawal privileges may be suspended if we detect suspicious activity, incomplete verification, or violations of these Terms.
+                  </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="terms-section" id="sec5">
+                  <div class="section-header">
+                    <div class="section-icon icon-red"><i class="fa-solid fa-ban"></i></div>
+                    <div>
+                      <div class="section-num">Section 05</div>
+                      <h2>Prohibited Activities</h2>
+                    </div>
+                  </div>
+                  <p>The following activities are strictly prohibited on Batrus Trades. Engaging in any of these may result in immediate account termination and potential legal action:</p>
+                  <ul class="terms-list">
+                    <li>Using the platform for money laundering, fraud, or any other illegal activity.</li>
+                    <li>Attempting to hack, disrupt, or gain unauthorized access to the platform or other users' accounts.</li>
+                    <li>Providing false, misleading, or fraudulent information during registration or at any time.</li>
+                    <li>Creating multiple accounts or using another person's account without authorization.</li>
+                    <li>Engaging in market manipulation or any form of abusive trading behavior.</li>
+                    <li>Spamming, phishing, or distributing malicious software through the platform.</li>
+                    <li>Using automated bots or scripts to interact with the platform without prior written consent.</li>
+                    <li>Violating any applicable local, national, or international laws or regulations.</li>
+                  </ul>
+                  <div class="danger-box">
+                    🚫 Violations will result in immediate account suspension, forfeiture of funds where permitted by law, and may be reported to relevant authorities.
+                  </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="terms-section" id="sec6">
+                  <div class="section-header">
+                    <div class="section-icon icon-purple"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div>
+                      <div class="section-num">Section 06</div>
+                      <h2>Privacy Policy</h2>
+                    </div>
+                  </div>
+                  <p>Your privacy is important to us. By using Batrus Trades, you consent to the collection and use of your information as described below.</p>
+                  <ul class="terms-list">
+                    <li>We collect personal information such as your name, email address, and transaction history solely to provide and improve our services.</li>
+                    <li>We do not sell, rent, or trade your personal information to third parties.</li>
+                    <li>Your data may be shared with trusted third-party service providers (e.g. payment processors, email services) strictly to fulfill platform operations.</li>
+                    <li>We use industry-standard security measures including encryption to protect your data.</li>
+                    <li>Cookies may be used to enhance your experience on our platform.</li>
+                    <li>You have the right to request deletion of your personal data by contacting our support team.</li>
+                  </ul>
+                  <div class="highlight-box">
+                    We are committed to GDPR compliance and applicable data protection regulations. You may request a copy of the data we hold about you at any time.
+                  </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="terms-section" id="sec7">
+                  <div class="section-header">
+                    <div class="section-icon icon-dark"><i class="fa-solid fa-power-off"></i></div>
+                    <div>
+                      <div class="section-num">Section 07</div>
+                      <h2>Termination</h2>
+                    </div>
+                  </div>
+                  <p>Either party may terminate the user relationship at any time. Batrus Trades reserves the right to suspend or permanently close any account without prior notice in the event of a Terms violation.</p>
+                  <ul class="terms-list">
+                    <li>You may close your account at any time by contacting our support team.</li>
+                    <li>Upon termination, any outstanding investments will be handled per the active plan terms.</li>
+                    <li>We reserve the right to withhold funds pending investigation in cases of suspected fraud or policy violations.</li>
+                    <li>Batrus Trades is not liable for any loss arising from account termination due to Terms violations.</li>
+                    <li>Termination does not relieve you of any obligations incurred prior to the termination date.</li>
+                  </ul>
+                </div>
+
+                <!-- 8 -->
+                <div class="terms-section" id="sec8">
+                  <div class="section-header">
+                    <div class="section-icon icon-navy"><i class="fa-solid fa-headset"></i></div>
+                    <div>
+                      <div class="section-num">Section 08</div>
+                      <h2>Contact Us</h2>
+                    </div>
+                  </div>
+                  <p>If you have any questions, concerns, or complaints regarding these Terms and Conditions, please do not hesitate to reach out to our support team. We aim to respond to all enquiries within 24–48 business hours.</p>
+                  <div class="contact-grid">
+                    <div class="contact-item">
+                      <i class="fa-solid fa-envelope"></i>
+                      <div class="contact-label">Email Support</div>
+                      <div class="contact-value">info@digitexwaves.com</div>
+                    </div>
+                    <div class="contact-item">
+                      <i class="fa-solid fa-globe"></i>
+                      <div class="contact-label">Website</div>
+                      <div class="contact-value">digitexwaves.com</div>
+                    </div>
+                    <div class="contact-item">
+                      <i class="fa-solid fa-clock"></i>
+                      <div class="contact-label">Response Time</div>
+                      <div class="contact-value">24–48 Business Hours</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Footer bar -->
+              <div class="terms-footer-bar">
+                <p>© 2026 Batrus Trades. All rights reserved.</p>
+                <a href="/account">← Back to Dashboard</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery + Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Smooth scroll for TOC links
+      document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          const target = document.querySelector(link.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      // Highlight active TOC link on scroll
+      const sections = document.querySelectorAll('.terms-section');
+      const tocLinks = document.querySelectorAll('.toc-link');
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(sec => {
+          if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+        });
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+          }
+        });
+      });
+    </script>
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+
+  </body>
+</html>

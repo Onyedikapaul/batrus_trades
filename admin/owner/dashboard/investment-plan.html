@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Investment Plans</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .plans-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+      }
+      .plans-table th,
+      .plans-table td {
+        padding: 0.9rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 0.9rem;
+      }
+      .plans-table th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #374151;
+      }
+      .plans-table tr:hover td {
+        background: #f9fafb;
+      }
+      .badge {
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .badge-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .toggle-btn {
+        padding: 0.35rem 0.9rem;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .toggle-btn.deactivate {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .toggle-btn.activate {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .delete-btn {
+        padding: 0.35rem 0.9rem;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-weight: 500;
+        background: #fef3c7;
+        color: #92400e;
+        margin-left: 0.4rem;
+      }
+      .delete-btn:hover {
+        background: #fde68a;
+      }
+      .btn-add {
+        display: inline-block;
+        padding: 0.6rem 1.4rem;
+        background: #2563eb;
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      .btn-add:hover {
+        background: #1d4ed8;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .loading {
+        color: #6b7280;
+        padding: 2rem 0;
+        text-align: center;
+      }
+
+      /* Toast */
+      .toast-container {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        min-width: 280px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        animation: slideIn 0.3s ease;
+      }
+      .toast.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+      }
+      .toast.warning {
+        background: #fef3c7;
+        color: #92400e;
+        border-left: 4px solid #f59e0b;
+      }
+      .toast-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        opacity: 0.6;
+        color: inherit;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* Confirm overlay */
+      .confirm-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .confirm-box {
+        background: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        max-width: 380px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      }
+      .confirm-box h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+      .confirm-box p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+      }
+      .confirm-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+      .confirm-cancel {
+        padding: 0.5rem 1.2rem;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 0.875rem;
+      }
+      .confirm-delete {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 4px;
+        background: #ef4444;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      .confirm-delete:hover {
+        background: #dc2626;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <header id="topnav-mount"></header>
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top: 50px">
+          <div class="page-header">
+            <h1>Investment Plans</h1>
+            <a href="/admin/owner/dashboard/add-investment-plan.html" class="btn-add"
+              >+ Add Plan</a
+            >
+          </div>
+
+          <div class="card">
+            <table class="plans-table" id="plans-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Min ($)</th>
+                  <th>Max ($)</th>
+                  <th>Duration</th>
+                  <th>Return</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="plans-body">
+                <tr>
+                  <td colspan="7" class="loading">Loading plans...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer id="footer-mount"></footer>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      // ── TOAST ──────────────────────────────────────────
+      function showToast(type, message, duration = 3500) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌", warning: "⚠️" };
+        toast.innerHTML = `
+          <span>${icons[type] || ""}</span>
+          <span>${message}</span>
+          <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), duration);
+      }
+
+      // ── CONFIRM DIALOG ─────────────────────────────────
+      function showConfirm(message, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.className = "confirm-overlay";
+        overlay.innerHTML = `
+          <div class="confirm-box">
+            <h3>Are you sure?</h3>
+            <p>${message}</p>
+            <div class="confirm-actions">
+              <button class="confirm-cancel">Cancel</button>
+              <button class="confirm-delete">Delete</button>
+            </div>
+          </div>
+        `;
+        overlay.querySelector(".confirm-cancel").onclick = () =>
+          overlay.remove();
+        overlay.querySelector(".confirm-delete").onclick = () => {
+          overlay.remove();
+          onConfirm();
+        };
+        document.body.appendChild(overlay);
+      }
+
+      // ── LOAD PLANS ─────────────────────────────────────
+      async function loadPlans() {
+        const tbody = document.getElementById("plans-body");
+        try {
+          const res = await fetch("/api/admin/investment/plans/all", {
+            credentials: "include",
+          });
+          const { success, data } = await res.json();
+          if (!success || !data.length) {
+            tbody.innerHTML =
+              '<tr><td colspan="7" class="loading">No plans found.</td></tr>';
+            return;
+          }
+          renderRows(data, tbody);
+        } catch (err) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="loading">Failed to load plans.</td></tr>';
+          console.error(err);
+        }
+      }
+
+      function renderRows(data, tbody) {
+        tbody.innerHTML = data
+          .map(
+            (plan) => `
+          <tr id="row-${plan._id}">
+            <td><strong>${plan.name}</strong></td>
+            <td>$${plan.min_amount.toLocaleString()}</td>
+            <td>$${plan.max_amount.toLocaleString()}</td>
+            <td>${plan.duration_hours} hrs</td>
+            <td>${plan.return_percentage}%</td>
+            <td>
+              <span class="badge ${plan.is_active ? "badge-active" : "badge-inactive"}" id="badge-${plan._id}">
+                ${plan.is_active ? "Active" : "Inactive"}
+              </span>
+            </td>
+            <td>
+              <button
+                class="toggle-btn ${plan.is_active ? "deactivate" : "activate"}"
+                id="btn-${plan._id}"
+                onclick="togglePlan('${plan._id}', ${plan.is_active})">
+                ${plan.is_active ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                class="delete-btn"
+                onclick="confirmDelete('${plan._id}', '${plan.name}')">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
+      }
+
+      // ── TOGGLE ─────────────────────────────────────────
+      async function togglePlan(id, currentStatus) {
+        const btn = document.getElementById(`btn-${id}`);
+        const badge = document.getElementById(`badge-${id}`);
+        btn.disabled = true;
+        btn.textContent = "Updating...";
+
+        try {
+          const res = await fetch(`/api/admin/investment/plans/${id}/toggle`, {
+            method: "PATCH",
+            credentials: "include",
+          });
+          const { success, data } = await res.json();
+          if (!success) throw new Error();
+
+          badge.className = `badge ${data.is_active ? "badge-active" : "badge-inactive"}`;
+          badge.textContent = data.is_active ? "Active" : "Inactive";
+          btn.className = `toggle-btn ${data.is_active ? "deactivate" : "activate"}`;
+          btn.textContent = data.is_active ? "Deactivate" : "Activate";
+          btn.onclick = () => togglePlan(id, data.is_active);
+
+          showToast(
+            data.is_active ? "success" : "warning",
+            `Plan ${data.is_active ? "activated" : "deactivated"} successfully`,
+          );
+        } catch (err) {
+          btn.textContent = currentStatus ? "Deactivate" : "Activate";
+          showToast("error", "Failed to update plan status");
+          console.error(err);
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      // ── DELETE ─────────────────────────────────────────
+      function confirmDelete(id, name) {
+        showConfirm(
+          `This will permanently delete <strong>${name}</strong>. This cannot be undone.`,
+          () => deletePlan(id),
+        );
+      }
+
+      async function deletePlan(id) {
+        try {
+          const res = await fetch(`/api/admin/investment/plans/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+
+          document.getElementById(`row-${id}`)?.remove();
+          showToast("success", "Plan deleted successfully");
+
+          // Show empty state if no rows left
+          const tbody = document.getElementById("plans-body");
+          if (!tbody.querySelector("tr")) {
+            tbody.innerHTML =
+              '<tr><td colspan="7" class="loading">No plans found.</td></tr>';
+          }
+        } catch (err) {
+          showToast("error", err.message || "Failed to delete plan");
+          console.error(err);
+        }
+      }
+
+      loadPlans();
+    </script>
+  </body>
+</html>

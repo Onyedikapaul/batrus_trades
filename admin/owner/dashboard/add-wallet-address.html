@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wallet Addresses — Admin</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .wallet-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 0 60px;
+      }
+      .wallet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .wallet-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+      .add-card {
+        background: #fff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 32px;
+      }
+      .add-card h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0 0 18px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #344054;
+      }
+      .form-group input,
+      .form-group select {
+        padding: 9px 12px;
+        border: 1.5px solid #d0d5dd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+        background: #fff;
+        color: #344054;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: #e8981d;
+      }
+      .form-group input[readonly] {
+        background: #f9fafb;
+        color: #667085;
+      }
+      .address-group {
+        grid-column: 1 / -1;
+      }
+      .btn-add {
+        margin-top: 16px;
+        padding: 10px 24px;
+        background: #e8981d;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-add:hover {
+        background: #c47a0f;
+      }
+      .btn-add:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .table-card {
+        background: #fff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .table-card table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table-card th {
+        background: #f9fafb;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #667085;
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e4e7ec;
+      }
+      .table-card td {
+        padding: 14px 16px;
+        font-size: 0.88rem;
+        color: #344054;
+        border-bottom: 1px solid #f2f4f7;
+        vertical-align: middle;
+      }
+      .table-card tr:last-child td {
+        border-bottom: none;
+      }
+      .table-card tr:hover td {
+        background: #fafafa;
+      }
+      .address-cell {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: #475467;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-active {
+        background: #ecfdf3;
+        color: #027a48;
+      }
+      .badge-inactive {
+        background: #fef3f2;
+        color: #b42318;
+      }
+      .network-tag {
+        background: #eff8ff;
+        color: #1849a9;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .action-btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .btn-edit {
+        padding: 5px 14px;
+        background: #f2f4f7;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #344054;
+      }
+      .btn-edit:hover {
+        background: #e4e7ec;
+      }
+      .btn-toggle {
+        padding: 5px 14px;
+        background: #eff8ff;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #1849a9;
+      }
+      .btn-delete {
+        padding: 5px 14px;
+        background: #fef3f2;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #b42318;
+      }
+      #wallet-toast {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        padding: 12px 22px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        z-index: 99999;
+        opacity: 0;
+        transform: translateY(16px);
+        transition: all 0.35s ease;
+        pointer-events: none;
+      }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 14px;
+        padding: 28px;
+        width: 100%;
+        max-width: 480px;
+        margin: 16px;
+      }
+      .modal h3 {
+        margin: 0 0 20px;
+        font-size: 1.1rem;
+      }
+      .modal-btns {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: flex-end;
+      }
+      .btn-cancel {
+        padding: 9px 20px;
+        background: #f2f4f7;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-save {
+        padding: 9px 20px;
+        background: #e8981d;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #667085;
+        font-size: 0.95rem;
+      }
+      @media (max-width: 640px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .table-card {
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="topnav-mount"></header>
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top: 50px">
+          <div class="wallet-wrap">
+            <div class="wallet-header">
+              <h1>💳 Wallet Addresses</h1>
+            </div>
+
+            <!-- Add Wallet Form -->
+            <div class="add-card">
+              <h3>Add New Wallet</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Coin <span style="color: #e8981d">*</span></label>
+                  <select id="add-coin" onchange="onCoinChange()">
+                    <option value="">— Select Coin —</option>
+                    <option value="bitcoin">Bitcoin</option>
+                    <option value="ethereum">Ethereum</option>
+                    <option value="tether usdt trc20">
+                      Tether USDT (TRC20)
+                    </option>
+                    <option value="tether usdt erc20">
+                      Tether USDT (ERC20)
+                    </option>
+                    <option value="tether usdt bep20">
+                      Tether USDT (BEP20)
+                    </option>
+                    <option value="bitcoin cash">Bitcoin Cash</option>
+                    <option value="xrp">XRP (Ripple)</option>
+                    <option value="tron">Tron (TRX)</option>
+                    <option value="doge">Dogecoin</option>
+                    <option value="bnb smart chain">BNB Smart Chain</option>
+                    <option value="solana">Solana</option>
+                    <option value="litecoin">Litecoin</option>
+                    <option value="cardano">Cardano</option>
+                    <option value="polkadot">Polkadot</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Symbol</label>
+                  <input
+                    type="text"
+                    id="add-symbol"
+                    readonly
+                    placeholder="Auto-filled"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Network</label>
+                  <input
+                    type="text"
+                    id="add-network"
+                    readonly
+                    placeholder="Auto-filled"
+                  />
+                </div>
+                <div class="form-group address-group">
+                  <label
+                    >Wallet Address <span style="color: #e8981d">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="add-address"
+                    placeholder="Paste wallet address here"
+                  />
+                </div>
+              </div>
+              <button class="btn-add" id="addWalletBtn" onclick="addWallet()">
+                + Add Wallet
+              </button>
+            </div>
+
+            <!-- Wallets Table -->
+            <div class="table-card">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Coin</th>
+                    <th>Symbol</th>
+                    <th>Network</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="walletTableBody">
+                  <tr>
+                    <td colspan="6" class="empty-state">Loading wallets...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer id="footer-mount"></footer>
+
+    <!-- Edit Modal — only address is editable -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal">
+        <h3>Edit Wallet Address</h3>
+        <input type="hidden" id="edit-id" />
+        <div class="form-group" style="margin-bottom: 12px">
+          <label>Coin</label>
+          <input type="text" id="edit-coin-label" readonly />
+        </div>
+        <div class="form-group" style="margin-bottom: 12px">
+          <label>Symbol</label>
+          <input type="text" id="edit-symbol" readonly />
+        </div>
+        <div class="form-group" style="margin-bottom: 12px">
+          <label>Network</label>
+          <input type="text" id="edit-network" readonly />
+        </div>
+        <div class="form-group">
+          <label
+            >New Wallet Address <span style="color: #e8981d">*</span></label
+          >
+          <input
+            type="text"
+            id="edit-address"
+            placeholder="Paste new address"
+          />
+        </div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="wallet-toast"></div>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+
+    <script>
+      const API = "/api/admin/wallets";
+
+      const COIN_META = {
+        bitcoin: { symbol: "BTC", network: "" },
+        ethereum: { symbol: "ETH", network: "" },
+        "tether usdt trc20": { symbol: "USDT", network: "TRC20" },
+        "tether usdt erc20": { symbol: "USDT", network: "ERC20" },
+        "tether usdt bep20": { symbol: "USDT", network: "BEP20" },
+        "bitcoin cash": { symbol: "BCH", network: "" },
+        xrp: { symbol: "XRP", network: "" },
+        tron: { symbol: "TRX", network: "" },
+        doge: { symbol: "DOGE", network: "" },
+        "bnb smart chain": { symbol: "BNB", network: "BEP20" },
+        solana: { symbol: "SOL", network: "" },
+        litecoin: { symbol: "LTC", network: "" },
+        cardano: { symbol: "ADA", network: "" },
+        polkadot: { symbol: "DOT", network: "" },
+      };
+
+      function onCoinChange() {
+        const coin = document.getElementById("add-coin").value;
+        const meta = COIN_META[coin] || { symbol: "", network: "" };
+        document.getElementById("add-symbol").value = meta.symbol;
+        document.getElementById("add-network").value = meta.network;
+      }
+
+      function showToast(msg, success = true) {
+        const t = document.getElementById("wallet-toast");
+        t.textContent = msg;
+        t.style.background = success ? "#12b76a" : "#f04438";
+        t.style.opacity = "1";
+        t.style.transform = "translateY(0)";
+        setTimeout(() => {
+          t.style.opacity = "0";
+          t.style.transform = "translateY(16px)";
+        }, 3500);
+      }
+
+      async function loadWallets() {
+        try {
+          const res = await fetch(API, { credentials: "include" });
+          const data = await res.json();
+          renderTable(data.wallets || []);
+        } catch {
+          showToast("Failed to load wallets", false);
+        }
+      }
+
+      function renderTable(wallets) {
+        const tbody = document.getElementById("walletTableBody");
+        if (!wallets.length) {
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No wallets added yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = wallets
+          .map(
+            (w) => `
+          <tr>
+            <td style="font-weight:600;text-transform:capitalize;">${w.coin}</td>
+            <td><strong>${w.symbol}</strong></td>
+            <td>${w.network ? `<span class="network-tag">${w.network}</span>` : '<span style="color:#98a2b3">—</span>'}</td>
+            <td><div class="address-cell" title="${w.address}">${w.address}</div></td>
+            <td><span class="badge ${w.isActive ? "badge-active" : "badge-inactive"}">${w.isActive ? "Active" : "Inactive"}</span></td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-edit" onclick="openEdit('${w._id}','${w.coin}','${w.symbol}','${w.network || ""}','${w.address}')">Edit</button>
+                <button class="btn-toggle" onclick="toggleWallet('${w._id}', ${w.isActive})">${w.isActive ? "Disable" : "Enable"}</button>
+                <button class="btn-delete" onclick="deleteWallet('${w._id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
+      }
+
+      async function addWallet() {
+        const btn = document.getElementById("addWalletBtn");
+        const coin = document.getElementById("add-coin").value.trim();
+        const symbol = document.getElementById("add-symbol").value.trim();
+        const network = document.getElementById("add-network").value.trim();
+        const address = document.getElementById("add-address").value.trim();
+
+        if (!coin || !address)
+          return showToast(
+            "Please select a coin and enter the address.",
+            false,
+          );
+
+        btn.disabled = true;
+        btn.textContent = "Adding...";
+        try {
+          const res = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ coin, symbol, network, address }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast("✅ Wallet added!");
+            document.getElementById("add-coin").value = "";
+            document.getElementById("add-symbol").value = "";
+            document.getElementById("add-network").value = "";
+            document.getElementById("add-address").value = "";
+            loadWallets();
+          } else {
+            showToast(data.message, false);
+          }
+        } catch {
+          showToast("Network error.", false);
+        }
+        btn.disabled = false;
+        btn.textContent = "+ Add Wallet";
+      }
+
+      function openEdit(id, coin, symbol, network, address) {
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-coin-label").value = coin;
+        document.getElementById("edit-symbol").value = symbol;
+        document.getElementById("edit-network").value = network || "—";
+        document.getElementById("edit-address").value = address;
+        document.getElementById("editModal").classList.add("open");
+      }
+
+      function closeModal() {
+        document.getElementById("editModal").classList.remove("open");
+      }
+
+      async function saveEdit() {
+        const id = document.getElementById("edit-id").value;
+        const address = document.getElementById("edit-address").value.trim();
+        if (!address) return showToast("Address is required.", false);
+
+        try {
+          const res = await fetch(`${API}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ address }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast("✅ Wallet updated!");
+            closeModal();
+            loadWallets();
+          } else showToast(data.message, false);
+        } catch {
+          showToast("Network error.", false);
+        }
+      }
+
+      async function toggleWallet(id, currentActive) {
+        try {
+          const res = await fetch(`${API}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ isActive: !currentActive }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Wallet ${!currentActive ? "enabled" : "disabled"}.`);
+            loadWallets();
+          } else showToast(data.message, false);
+        } catch {
+          showToast("Network error.", false);
+        }
+      }
+
+      async function deleteWallet(id) {
+        if (!confirm("Delete this wallet? This cannot be undone.")) return;
+        try {
+          const res = await fetch(`${API}/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast("Wallet deleted.");
+            loadWallets();
+          } else showToast(data.message, false);
+        } catch {
+          showToast("Network error.", false);
+        }
+      }
+
+      document
+        .getElementById("editModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeModal();
+        });
+
+      loadWallets();
+    </script>
+  </body>
+</html>

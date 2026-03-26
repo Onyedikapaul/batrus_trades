@@ -1,0 +1,265 @@
+/* ============================================
+   DIGITEX WAVES - Login / Auth Pages CSS
+   Matches exact design: light-blue bg, white card,
+   blue title, bordered inputs, teal button
+   ============================================ */
+
+:root {
+  --teal:       #1ee0ac;
+  --teal-dark:  #17c99b;
+  --blue-title: #2c4a8f;
+  --blue-link:  #559bfb;
+  --dark:       #1c2b46;
+  --light-bg:   #e8edf5;
+  --white:      #ffffff;
+  --muted:      #8094ae;
+  --border:     #dbdfea;
+  --input-bg:   #ffffff;
+  --radius:     4px;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Nunito', 'Open Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--dark);
+  background-color: var(--light-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { text-decoration: none; color: var(--blue-link); }
+a:hover { color: var(--teal-dark); }
+ul { list-style: none; padding: 0; margin: 0; }
+
+/* ---- Page wrapper ---- */
+.nk-body { background-color: var(--light-bg); }
+.nk-wrap  { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---- Main centered section ---- */
+.nk-pages {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.section {
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ---- Flex centering helpers ---- */
+.d-flex                    { display: flex; }
+.justify-content-center    { justify-content: center; }
+.justify-content-between   { justify-content: space-between; }
+.align-items-center        { align-items: center; }
+.nk-blocks                 { width: 100%; }
+
+/* ---- Auth card container ---- */
+.ath-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.m-0 { margin: 0 !important; }
+
+/* ---- Auth body (inner padding) ---- */
+.ath-body {
+  padding: 2.5rem 2.5rem 2rem;
+}
+
+/* ---- Logo ---- */
+.ath-body center a img,
+.ath-body .text-center img {
+  height: 50px;
+  display: block;
+  margin: 0 auto 1.25rem;
+}
+
+.mb-3 { margin-bottom: 1rem !important; }
+.text-center { text-align: center !important; }
+
+/* ---- "Sign In" heading ---- */
+.ath-heading.title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--blue-title);
+  text-align: center;
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Form fields ---- */
+.field-item {
+  margin-bottom: 1.1rem;
+}
+
+.field-item.pb-0 { padding-bottom: 0; margin-bottom: 0; }
+
+.field-wrap {
+  position: relative;
+}
+
+/* Inputs */
+.input-bordered {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--dark);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: block;
+}
+
+.input-bordered::placeholder { color: var(--muted); }
+
+.input-bordered:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(30, 224, 172, 0.15);
+}
+
+/* ---- Remember me + Forgot password row ---- */
+.field-item.d-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+
+/* Checkbox */
+.input-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.4rem;
+  accent-color: var(--teal);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+label[for="remember-me-100"] {
+  font-size: 0.875rem;
+  color: var(--dark);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.forget-link a,
+.fz-6 a {
+  font-size: 0.875rem;
+  color: var(--blue-link);
+}
+
+.forget-link a:hover { color: var(--teal-dark); }
+
+/* ---- Cloudflare Turnstile ---- */
+.cf-turnstile {
+  margin-bottom: 1.1rem;
+}
+
+/* ---- Sign In button ---- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.5;
+}
+
+.btn-secondary {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background: var(--teal-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 224, 172, 0.35);
+}
+
+.btn-block { width: 100%; }
+.btn-md    { padding: 0.8rem 1.5rem; }
+
+/* ---- "Don't have an account" note ---- */
+.ath-note {
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.ath-note a        { color: var(--blue-link); font-weight: 600; }
+.ath-note a:hover  { color: var(--teal-dark); }
+
+/* ---- Preloader ---- */
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.4s;
+}
+
+.preloader.loaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .ath-body {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .ath-heading.title {
+    font-size: 1.5rem;
+  }
+}

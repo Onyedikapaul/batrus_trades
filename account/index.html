@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Best investment site with stable returns.">
+    <meta name="author" content="Creative Tim">
+    <title>dashboard - Batrus Trades</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+
+    <!-- Font Awesome 4.7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+
+    <!-- Your custom Argon CSS -->
+    <link rel="stylesheet" href="/assets/account/argon.css">
+
+    <style>
+        .main-content {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 1199px) {
+            .main-content { margin-left: 0; }
+        }
+
+        /* ---- Preloader ---- */
+        #page-preloader {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #page-preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-logo {
+            height: 56px;
+            margin-bottom: 28px;
+            animation: pulse-logo 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1);   opacity: 1; }
+            50%       { transform: scale(1.06); opacity: 0.8; }
+        }
+
+        .preloader-bar-wrap {
+            width: 200px;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .preloader-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f5a623, #ffd166);
+            border-radius: 99px;
+            animation: bar-fill 1.8s ease forwards;
+        }
+
+        @keyframes bar-fill {
+            0%   { width: 0%; }
+            60%  { width: 75%; }
+            100% { width: 100%; }
+        }
+
+        .preloader-text {
+            margin-top: 14px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #8898aa;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+    </style>
+
+<!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = '803c89440b79eef230d211e6bef5a403e6bae0a5';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
+ 
+</head>
+
+<body>
+
+    <!-- ====== PRELOADER ====== -->
+    <div id="page-preloader">
+        <img src="/assets/images/logo.png" class="preloader-logo" alt="Batrus Trades">
+        <div class="preloader-bar-wrap">
+            <div class="preloader-bar"></div>
+        </div>
+        <div class="preloader-text">Loading dashboard...</div>
+    </div>
+
+    <!-- Sidenav -->
+    <div id="sidenav-mount"></div>
+
+    <div class="main-content" id="panel">
+        <!-- Topnav -->
+        <div id="topnav-mount"></div>
+
+        <!-- Header -->
+        <div class="header bg-primary pb-6">
+            <div class="container-fluid">
+                <div class="header-body">
+                    <div class="row align-items-center py-4">
+                        <div class="col-12">
+                            <h6 class="h2 text-white d-inline-block mb-0">Dashboard</h6>
+                            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                    <li class="breadcrumb-item"><a href="/account/"><i class="fa fa-home text-default"></i></a></li>
+                                    <li class="breadcrumb-item active">Dashboard</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- Card stats -->
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title text-uppercase text-muted mb-0">Running investments</h5>
+                                            <span class="inv-active-amount h2 font-weight-bold mb-0">$0</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                                <i class="fa fa-pie-chart"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0 text-sm">
+                                        <span class="text-dark mr-2"><i class="fa fa-arrow-up"></i> Active</span>
+                                        <span class="text-nowrap"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title text-uppercase text-muted mb-0">Referral earnings</h5>
+                                            <span class="ref-total-earned h2 font-weight-bold mb-0"></span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                                <i class="fa fa-users"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0 text-sm">
+                                        <span class="text-dark mr-2"><i class="fa fa-arrow-up"></i> 10%</span>
+                                        <span class="text-nowrap">Per referral</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title text-uppercase text-muted mb-0">Total Investment</h5>
+                                            <span class="inv-total-invested h2 font-weight-bold mb-0">$0</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                <i class="fa fa-money"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0 text-sm">
+                                        <span class="text-dark mr-2"><i class="fa fa-refresh"></i> 0</span>
+                                        <span class="text-nowrap">Cycles</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title text-uppercase text-muted mb-0">Total Profit</h5>
+                                            <span class="inv-total-profit h2 font-weight-bold mb-0">$0</span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                <i class="fa fa-line-chart"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0 text-sm">
+                                        <span class="text-dark mr-2"><i class="fa fa-refresh"></i> 0</span>
+                                        <span class="text-nowrap">Cycles</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title text-uppercase text-muted mb-0">Balance</h5>
+                                            <span class="h2 font-weight-bold mb-0">$</span>
+                                            <span class="user-account-balance h2 font-weight-bold mb-0"></span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                                <i class="fa fa-dollar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 mb-0 text-sm">
+                                        <span class="text-dark mr-2"><i class="fa fa-refresh"></i> 0</span>
+                                        <span class="text-nowrap">Cycles</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="container-fluid mt--6">
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Latest Referral Earnings</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">user id</th>
+                                        <th scope="col">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="referral-table-body"></tbody>
+                                <tbody>
+                                    <tr></tr>
+                                    <tr>
+                                        <th colspan="4" class="lead text-center" style="font-weight: 300;">
+                                            Referral link:
+                                            <input type="text" id="referral-link-input" class="user-referral-code" readonly>
+                                            <button class="btn-icon-clipboard p-1 m-1" type="button" id="referral-copy-btn" title="Copy to clipboard" style="width: auto; border-radius: 0%;">
+                                                <i class="fa fa-copy" id="referral-copy-icon"></i>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Account</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-items-center table-flush">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <i class="fa fa-clock-o text-dark mr-3"></i>Registered
+                                        </th>
+                                        <td><span class="user-member-since"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <i class="fa fa-dollar text-dark mr-3"></i>Balance
+                                        </th>
+                                        <td>
+                                            <span>$</span>
+                                            <span class="user-account-balance"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer bg-primary p-1">
+                            <a href="withdraw.html" class="w-100 btn btn-primary">Withdraw</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer pt-0">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6">
+                        <div class="copyright text-center text-lg-left text-muted">
+                            &copy; 2026 <a href="/account" class="font-weight-bold ml-1" target="_blank">Batrus Trades</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="/account/terms.html" class="nav-link">Terms</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Local scripts -->
+    <script src="/auth-script/load-sidenav.js"></script>
+    <script src="/auth-script/load-topnav.js"></script>
+    <script src="/auth-script/load-user-data.js"></script>
+    <script src="/auth-script/checkAuth.js"></script>
+    <script src="/auth-script/load-referrals.js"></script>
+    <script src="/auth-script/load-portfolio.js"></script>
+    <script src="/auth-script/load-investment-stats.js"></script>
+    <script src="/auth-script/load-referral-stats.js"></script>
+    <script src="/auth-script/checkExpiredInvestments.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <!-- JS Cookie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+    <!-- Clipboard -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
+
+    <!-- Google Translate -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://translate.yandex.net/website-widget/v1/widget.js?widgetId=ytWidget&pageLang=en&widgetTheme=light&autoMode=false" type="text/javascript"></script>
+
+    <script>
+        // ── Hide preloader once page is fully loaded ──
+        window.addEventListener('load', function () {
+            const preloader = document.getElementById('page-preloader');
+            // Small extra delay so the bar animation completes nicely
+            setTimeout(function () {
+                preloader.classList.add('fade-out');
+                setTimeout(function () {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 400);
+        });
+
+        // ── Referral copy button ──
+        document.getElementById('referral-copy-btn').addEventListener('click', function () {
+            const input = document.getElementById('referral-link-input');
+            const icon  = document.getElementById('referral-copy-icon');
+            const text  = input.value.trim();
+
+            if (!text) return;
+
+            // Use modern clipboard API, fall back to execCommand
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(flashSuccess).catch(fallback);
+            } else {
+                fallback();
+            }
+
+            function fallback() {
+                input.select();
+                input.setSelectionRange(0, 99999);
+                try { document.execCommand('copy'); flashSuccess(); }
+                catch (e) { console.warn('Copy failed', e); }
+                window.getSelection()?.removeAllRanges();
+            }
+
+            function flashSuccess() {
+                icon.classList.remove('fa-copy');
+                icon.classList.add('fa-check');
+                icon.style.color = '#2dce89';
+                setTimeout(function () {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-copy');
+                    icon.style.color = '';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+
+</html>

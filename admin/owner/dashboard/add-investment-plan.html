@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Investment Plan</title>
+    <link rel="icon" href="/assets/images/logo.png" />
+    <link rel="stylesheet" href="/admin/owner/dashboard/css/layout.css" />
+    <style>
+      .page-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .page-header a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 0.875rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        transition: all 0.2s;
+      }
+      .page-header a:hover {
+        background: #f9fafb;
+        color: #111827;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .form-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      .form-card {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+      }
+
+      .form-card-header {
+        padding: 1.25rem 1.75rem;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .form-card-header .icon {
+        width: 36px;
+        height: 36px;
+        background: #eff6ff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+
+      .form-card-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .form-card-header p {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-top: 0.1rem;
+      }
+
+      .form-body {
+        padding: 1.75rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+      .form-group:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-group label .required {
+        color: #ef4444;
+        font-size: 0.9rem;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-prefix {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.875rem;
+        color: #9ca3af;
+        pointer-events: none;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #111827;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        background: #fafafa;
+      }
+
+      .form-group input.has-prefix {
+        padding-left: 2rem;
+      }
+
+      .form-group input:focus {
+        border-color: #2563eb;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-group input::placeholder {
+        color: #d1d5db;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .divider {
+        height: 1px;
+        background: #f3f4f6;
+        margin: 1.5rem 0;
+      }
+
+      .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.75rem;
+        border-top: 1px solid #e5e7eb;
+        background: #f9fafb;
+      }
+
+      .btn-submit {
+        padding: 0.7rem 1.75rem;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition:
+          background 0.2s,
+          transform 0.15s;
+      }
+
+      .btn-submit:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+      }
+      .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-reset {
+        padding: 0.7rem 1.2rem;
+        background: transparent;
+        color: #6b7280;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-reset:hover {
+        border-color: #9ca3af;
+        color: #374151;
+      }
+
+      /* Preview card */
+      .preview-card {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        position: sticky;
+        top: 80px;
+      }
+
+      .preview-card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+      }
+
+      .preview-card-header h3 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .preview-body {
+        padding: 1.5rem;
+      }
+
+      .preview-plan {
+        background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+        border-radius: 8px;
+        padding: 1.5rem;
+        color: #fff;
+        margin-bottom: 1rem;
+      }
+
+      .preview-plan-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+
+      .preview-plan-roi {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #fbbf24;
+        margin: 0.75rem 0 0.25rem;
+      }
+
+      .preview-plan-roi span {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+      .preview-plan-label {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-bottom: 1.25rem;
+      }
+
+      .preview-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .preview-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 0.6rem 0.75rem;
+      }
+
+      .preview-stat-label {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-bottom: 0.2rem;
+      }
+      .preview-stat-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .preview-hint {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      /* Toast */
+      .toast-container {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        min-width: 280px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        animation: slideIn 0.3s ease;
+      }
+      .toast.success {
+        background: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+      }
+      .toast-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        opacity: 0.6;
+        color: inherit;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .form-wrapper {
+          grid-template-columns: 1fr;
+        }
+        .preview-card {
+          position: static;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+
+    <header id="topnav-mount"></header>
+    <div class="admin-shell">
+      <aside id="sidebar-mount" class="admin-sidebar"></aside>
+      <main class="admin-main">
+        <div class="admin-container" style="margin-top: 50px">
+          <div class="page-header">
+            <a href="/admin/owner/investment-plans/index.html">← Back</a>
+            <h1>Add Investment Plan</h1>
+          </div>
+
+          <div class="form-wrapper">
+            <!-- FORM -->
+            <div class="form-card">
+              <div class="form-card-header">
+                <div class="icon">📋</div>
+                <div>
+                  <h2>Plan Details</h2>
+                  <p>Fill in the fields to create a new investment plan</p>
+                </div>
+              </div>
+
+              <div class="form-body">
+                <div class="form-group">
+                  <label>Plan Name <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="e.g. Standard Plan"
+                    oninput="updatePreview()"
+                  />
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Min Amount <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">$</span>
+                      <input
+                        type="number"
+                        id="min_amount"
+                        class="has-prefix"
+                        placeholder="50"
+                        min="0"
+                        oninput="updatePreview()"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Max Amount <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                      <span class="input-prefix">$</span>
+                      <input
+                        type="number"
+                        id="max_amount"
+                        class="has-prefix"
+                        placeholder="499"
+                        min="0"
+                        oninput="updatePreview()"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label
+                      >Duration (Hours) <span class="required">*</span></label
+                    >
+                    <input
+                      type="number"
+                      id="duration_hours"
+                      placeholder="24"
+                      min="1"
+                      oninput="updatePreview()"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Return (%) <span class="required">*</span></label>
+                    <input
+                      type="number"
+                      id="return_percentage"
+                      placeholder="5"
+                      min="0"
+                      oninput="updatePreview()"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button
+                  class="btn-submit"
+                  id="submit-btn"
+                  onclick="submitPlan()"
+                >
+                  <span>✚</span> Create Plan
+                </button>
+                <button class="btn-reset" onclick="resetForm()">Reset</button>
+              </div>
+            </div>
+
+            <!-- LIVE PREVIEW -->
+            <div class="preview-card">
+              <div class="preview-card-header">
+                <h3>Live Preview</h3>
+              </div>
+              <div class="preview-body">
+                <div class="preview-plan">
+                  <div class="preview-plan-name" id="prev-name">Plan Name</div>
+                  <div class="preview-plan-roi" id="prev-roi">
+                    0<span>%</span>
+                  </div>
+                  <div class="preview-plan-label">Expected Return</div>
+                  <div class="preview-stats">
+                    <div class="preview-stat">
+                      <div class="preview-stat-label">Min</div>
+                      <div class="preview-stat-value" id="prev-min">$0</div>
+                    </div>
+                    <div class="preview-stat">
+                      <div class="preview-stat-label">Max</div>
+                      <div class="preview-stat-value" id="prev-max">$0</div>
+                    </div>
+                    <div class="preview-stat">
+                      <div class="preview-stat-label">Duration</div>
+                      <div class="preview-stat-value" id="prev-duration">
+                        0 hrs
+                      </div>
+                    </div>
+                    <div class="preview-stat">
+                      <div class="preview-stat-label">Status</div>
+                      <div class="preview-stat-value">Active</div>
+                    </div>
+                  </div>
+                </div>
+                <p class="preview-hint">Updates as you type</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer id="footer-mount"></footer>
+
+    <script src="/admin-script/admin-auth-required.js"></script>
+    <script src="/admin-script/admin-logout.js"></script>
+    <script src="/admin-script/admin-layout.js"></script>
+    <script>
+      function showToast(type, message, duration = 3500) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        const icons = { success: "✅", error: "❌" };
+        toast.innerHTML = `
+          <span>${icons[type] || ""}</span>
+          <span>${message}</span>
+          <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), duration);
+      }
+
+      function updatePreview() {
+        const name = document.getElementById("name").value || "Plan Name";
+        const min =
+          parseFloat(document.getElementById("min_amount").value) || 0;
+        const max =
+          parseFloat(document.getElementById("max_amount").value) || 0;
+        const duration =
+          parseFloat(document.getElementById("duration_hours").value) || 0;
+        const roi =
+          parseFloat(document.getElementById("return_percentage").value) || 0;
+
+        document.getElementById("prev-name").textContent = name;
+        document.getElementById("prev-roi").innerHTML = `${roi}<span>%</span>`;
+        document.getElementById("prev-min").textContent =
+          `$${min.toLocaleString()}`;
+        document.getElementById("prev-max").textContent =
+          `$${max.toLocaleString()}`;
+        document.getElementById("prev-duration").textContent =
+          `${duration} hrs`;
+      }
+
+      function resetForm() {
+        [
+          "name",
+          "min_amount",
+          "max_amount",
+          "duration_hours",
+          "return_percentage",
+        ].forEach((id) => {
+          document.getElementById(id).value = "";
+        });
+        updatePreview();
+      }
+
+      async function submitPlan() {
+        const btn = document.getElementById("submit-btn");
+
+        const name = document.getElementById("name").value.trim();
+        const min_amount = parseFloat(
+          document.getElementById("min_amount").value,
+        );
+        const max_amount = parseFloat(
+          document.getElementById("max_amount").value,
+        );
+        const duration_hours = parseFloat(
+          document.getElementById("duration_hours").value,
+        );
+        const return_percentage = parseFloat(
+          document.getElementById("return_percentage").value,
+        );
+
+        if (
+          !name ||
+          isNaN(min_amount) ||
+          isNaN(max_amount) ||
+          isNaN(duration_hours) ||
+          isNaN(return_percentage)
+        ) {
+          showToast("error", "All fields are required.");
+          return;
+        }
+
+        if (min_amount >= max_amount) {
+          showToast("error", "Max amount must be greater than min amount.");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = "<span>⏳</span> Creating...";
+
+        try {
+          const res = await fetch("/api/admin/investment/plans", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              name,
+              min_amount,
+              max_amount,
+              duration_hours,
+              return_percentage,
+            }),
+          });
+          const { success, message } = await res.json();
+          if (!success) throw new Error(message);
+
+          showToast("success", `"${name}" plan created successfully!`);
+          resetForm();
+        } catch (err) {
+          showToast("error", err.message || "Failed to create plan.");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "<span>✚</span> Create Plan";
+        }
+      }
+    </script>
+  </body>
+</html>
