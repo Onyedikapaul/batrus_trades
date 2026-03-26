@@ -34,8 +34,8 @@ const __dirname = path.dirname(__filename);
 const allowedOrigins = new Set([
   "http://localhost:4000",
   "http://127.0.0.1:5500",
-  "https://apex-trades.pro",
-  "https://www.apex-trades.pro"
+  "https://batrus-trades.pro",
+  "https://www.batrus-trades.pro"
 ]);
 
 // Middleware — order matters, all before routes
